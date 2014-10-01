@@ -22,16 +22,6 @@ import tools.Normalizer;
 public class TD2 {
 	
 	/**
-	 * Le répertoire du corpus
-	 */
-	private static String DIRNAME = "/home/xtannier/data/lemonde/";
-	/**
-	 * Le fichier contenant les mots vides
-	 */
-	private static String STOPWORDS_FILENAME = "frenchST.txt";
-
-	
-	/**
 	 * Une méthode renvoyant le nombre d'occurrences
 	 * de chaque mot dans un fichier.
 	 * @param fileName le fichier à analyser
@@ -229,21 +219,27 @@ public class TD2 {
 	 */
 	public static void main(String[] args) {
 		try {
-			String outDir = "/home/xtannier/tmp/sorties";
-			Normalizer stemmer = new FrenchStemmer(STOPWORDS_FILENAME);
-			Normalizer tokenizer = new FrenchTokenizer(STOPWORDS_FILENAME);
-			Normalizer[] normalizers = {tokenizer, stemmer};
-			for (Normalizer normalizer : normalizers) {
-				System.out.println("Normalisation avec " + normalizer.getClass().getName());
-				System.out.println("  GetDocumentFrequency sans les stop words");
-				System.out.println(getDocumentFrequency(DIRNAME, normalizer, false).size());
-				System.out.println("  GetDocumentFrequency avec les stop words");
-				System.out.println(getDocumentFrequency(DIRNAME, normalizer, true).size());
-				System.out.println("  GetWeightFiles sans les stop words");
-				getWeightFiles(DIRNAME, outDir + "/" + normalizer.getClass().getName() + "_noSW", normalizer, true);
-				System.out.println("  GetWeightFiles avec les stop words");
-				getWeightFiles(DIRNAME, outDir + "/" + normalizer.getClass().getName(), normalizer, false);
-			}
+			System.out.println(new File("./rsc/stop.txt").getCanonicalPath());
+			Normalizer stemmer = new FrenchStemmer(common.Common.DIRRSC+"stop.txt");
+			Normalizer tokenizer = new FrenchTokenizer(common.Common.DIRRSC+"stop.txt");
+			
+			getWeightFiles(common.Common.DIRCORPUS, common.Common.DIRWEIGTH_TOKENIZER, tokenizer, true);
+			System.out.println("  GetWeightFiles avec les stop words");
+			
+			getWeightFiles(common.Common.DIRCORPUS, common.Common.DIRWEIGTH_STEMMER, stemmer, true);
+			System.out.println("  GetWeightFiles avec les stop words");
+			
+//			for (Normalizer normalizer : normalizers) {
+//				System.out.println("Normalisation avec " + normalizer.getClass().getName());
+//				System.out.println("  GetDocumentFrequency sans les stop words");
+//				System.out.println(getDocumentFrequency(common.Common.DIRWEIGTH_STEMMER, normalizer, false).size());
+//				System.out.println("  GetDocumentFrequency avec les stop words");
+//				System.out.println(getDocumentFrequency(common.Common.DIRWEIGTH_TOKENIZER, normalizer, true).size());
+//				System.out.println("  GetWeightFiles sans les stop words");
+//				getWeightFiles(DIRNAME, outDir + "/" + normalizer.getClass().getName() + "_noSW", normalizer, true);
+//				System.out.println("  GetWeightFiles avec les stop words");
+//				getWeightFiles(DIRNAME, outDir + "/" + normalizer.getClass().getName(), normalizer, false);
+//			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
