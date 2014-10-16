@@ -12,8 +12,8 @@ public class Similarity {
 
 
 	public static double getSimilarity(String filename1, String filename2) throws IOException{
-		HashMap<String, Double> weight1 = Weighting.readWgtFile(new File(filename1+ ".poids"));
-		HashMap<String, Double> weight2 = Weighting.readWgtFile(new File(filename2+ ".poids"));
+		HashMap<String, Double> weight1 = Weighting.readWgtFile(new File(filename1));
+		HashMap<String, Double> weight2 = Weighting.readWgtFile(new File(filename2));
 		
 		double sum = 0;
 
@@ -32,11 +32,11 @@ public class Similarity {
 		return result;
 	}
 	
-	public static void getSimilarDocuments(String fileName, ArrayList<String[]> fileList) throws IOException{
+	public static void getSimilarDocuments(String fileName, HashMap<Short,String[]> h) throws IOException{
 		HashMap<String,Double> simFiles = new HashMap<>();
-		for (String[] file: fileList){
-			Double similarity = getSimilarity(fileName, file[0]);
-			simFiles.put(file[1], similarity);
+		for (Map.Entry<Short, String[]> key_: h.entrySet()){
+			Double similarity = getSimilarity(fileName, key_.getValue()[0]);
+			simFiles.put(key_.getValue()[1], similarity);
 		}
 		SortedSet<Entry<String, Double>> sortmap = common.Common.sortMap(simFiles);
 		for (Map.Entry val : sortmap){
@@ -45,10 +45,11 @@ public class Similarity {
 	}
 	
 	public static void main(String[] args) throws IOException{
-		System.out.println(getSimilarity(common.Common.DIRWEIGTH_STEMMER+"texte.95-1.txt", 
-				common.Common.DIRWEIGTH_STEMMER+"texte.95-2.txt"));
+		System.out.println(getSimilarity(common.Common.DIRWEIGTH_STEMMER+"texte.95-1.txt.poids", 
+				common.Common.DIRWEIGTH_STEMMER+"texte.95-2.txt.poids"));
 		File f = new File(common.Common.DIRWEIGTH_STEMMER);
-		ArrayList<String[]> files = common.Common.getDirectory(f, "poids");
-		getSimilarDocuments(common.Common.DIRWEIGTH_STEMMER+"texte.95-1.txt", files);
+		HashMap<Short,String[]> h=new HashMap<>();
+		 common.Common.getDirectory(f,h,".poids");
+		getSimilarDocuments(common.Common.DIRWEIGTH_STEMMER+"texte.95-1.txt.poids", h);
 	}
 }

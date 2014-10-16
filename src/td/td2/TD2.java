@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import tools.FrenchStemmer;
@@ -81,7 +82,7 @@ public class TD2 {
 			// ajouter un filtre (FileNameFilter) sur les noms
 			// des fichiers si nécessaire
 			String[] fileNames = dir.list();
-			
+			TreeMap<String, String> v;
 			Integer number;
 			for (String fileName : fileNames) {
 				System.err.println("Analyse du fichier " + fileName);

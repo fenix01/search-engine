@@ -2,4 +2,6 @@ eclipse.preferences.version=1
 encoding//rsc/lemonde=ISO-8859-1
 encoding//rsc/lemonde/texte.95-1.txt=ISO-8859-1
 encoding//rsc/stop.txt=ISO-8859-1
+encoding/<project>=ISO-8859-1
 encoding/inverted=ISO-8859-1
+encoding/src=ISO-8859-1

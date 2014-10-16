@@ -2,6 +2,7 @@ package common;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +13,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import tools.FrenchStemmer;
+import tools.FrenchTokenizer;
+import tools.Normalizer;
 
 //Classe qui contient des méthodes communes pour les différentes package
 
@@ -103,23 +108,32 @@ public class Common {
 
 	// Fonction qui renvoit la liste des fichiers contenus dans un répertoire en
 	// fonction de son extension
-	public static ArrayList<String[]> getDirectory(File dirName, final String extension) {
-		File[] ltFiles = null;
+	public static void getDirectory(File f, HashMap<Short,String[]> listFiles, final String ext) throws IOException {
 		// Liste des fichiers du répertoire
 		// ajouter un filtre (FileNameFilter) sur les noms
 		// des fichiers si nécessaire
-		ltFiles = dirName.listFiles();
-		ArrayList<String[]> listFiles = new ArrayList<String[]>();
-		for (File file : ltFiles) {
-			if (file.getName().endsWith(extension)) {
-				String[] fileStr = new String[2];
-				fileStr[0] = file.getAbsolutePath();
-				fileStr[1] = file.getName();
-				
-				listFiles.add(fileStr);
+		File[] ltFiles=null;
+		ltFiles = f.listFiles(new FileFilter() {
+			
+			@Override
+			public boolean accept(File pathname) {
+				if (!pathname.isDirectory() && !pathname.getName().endsWith(ext))
+					return false;
+				return true;
 			}
+		});
+
+		for (File file_ : ltFiles) {
+			
+			if(file_.isDirectory())
+					getDirectory(file_, listFiles,ext);
+			
+			String[] fileStr = new String[2];
+			fileStr[0] = file_.getCanonicalPath();
+			fileStr[1] = file_.getName();
+				
+			listFiles.put((short) listFiles.size(),fileStr);
 		}
-		return listFiles;
 	}
 
 	
@@ -130,6 +144,16 @@ public class Common {
 		FileWriter fw = new FileWriter(f);
 		fw.write(content);
 		fw.close();
+	}
+	
+	public static void main(String[] args) throws IOException {
+		File f = new File(DIRCORPUS);
+		HashMap<Short,String[]> h=new HashMap<>();
+		getDirectory(f,h,".txt");
+		for (Entry<Short, String[]> hit : h.entrySet()) {
+			System.out.println(hit.getKey() + "\t" + hit.getValue()[0]);
+		}
+		
 	}
 
 }
