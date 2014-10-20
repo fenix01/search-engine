@@ -1,5 +1,7 @@
 package common;
 
+import indexation.TaskIndexing;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
@@ -108,7 +110,7 @@ public class Common {
 
 	// Fonction qui renvoit la liste des fichiers contenus dans un répertoire en
 	// fonction de son extension
-	public static void getDirectory(File f, HashMap<Short,String[]> listFiles, final String ext) throws IOException {
+	public static void getDirectory(File f, HashMap<Integer,String[]> listFiles, final String ext) throws IOException {
 		// Liste des fichiers du répertoire
 		// ajouter un filtre (FileNameFilter) sur les noms
 		// des fichiers si nécessaire
@@ -124,15 +126,14 @@ public class Common {
 		});
 
 		for (File file_ : ltFiles) {
-			
 			if(file_.isDirectory())
 					getDirectory(file_, listFiles,ext);
-			
-			String[] fileStr = new String[2];
-			fileStr[0] = file_.getCanonicalPath();
-			fileStr[1] = file_.getName();
-				
-			listFiles.put((short) listFiles.size(),fileStr);
+			else{
+				String[] fileStr = new String[2];
+				fileStr[0] = file_.getCanonicalPath();
+				fileStr[1] = file_.getName();
+				listFiles.put(listFiles.size(),fileStr);
+			}	
 		}
 	}
 
@@ -147,12 +148,26 @@ public class Common {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		File f = new File(DIRCORPUS);
-		HashMap<Short,String[]> h=new HashMap<>();
-		getDirectory(f,h,".txt");
-		for (Entry<Short, String[]> hit : h.entrySet()) {
+		//File f = new File(Common.DIRCORPUS);
+		File f = new File("/partage/public/iri/projetIRI/corpus/0000/");
+		HashMap<Integer,String[]> h=new HashMap<>();
+
+		long startTime = System.currentTimeMillis(); 
+		Common.getDirectory(f,h,".txt");
+		System.out.println( System.currentTimeMillis()-startTime );
+		Normalizer stemmer = new FrenchStemmer(common.Common.DIRRSC+"stop.txt");
+		
+		for (Map.Entry<Integer, String[]> hit : h.entrySet()) {
 			System.out.println(hit.getKey() + "\t" + hit.getValue()[0]);
 		}
+		
+		TaskIndexing ti1  = new TaskIndexing(h,0,5000,stemmer,true,"index1");
+		TaskIndexing ti2  = new TaskIndexing(h,5001,h.size(),stemmer,true, "index2");
+		
+		Thread thread1 = new Thread(ti1);
+		Thread thread2 = new Thread(ti2);
+		thread1.start();
+		thread2.start();
 		
 	}
 

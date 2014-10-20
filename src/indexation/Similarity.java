@@ -32,9 +32,9 @@ public class Similarity {
 		return result;
 	}
 	
-	public static void getSimilarDocuments(String fileName, HashMap<Short,String[]> h) throws IOException{
+	public static void getSimilarDocuments(String fileName, HashMap<Integer,String[]> h) throws IOException{
 		HashMap<String,Double> simFiles = new HashMap<>();
-		for (Map.Entry<Short, String[]> key_: h.entrySet()){
+		for (Map.Entry<Integer, String[]> key_: h.entrySet()){
 			Double similarity = getSimilarity(fileName, key_.getValue()[0]);
 			simFiles.put(key_.getValue()[1], similarity);
 		}
@@ -48,7 +48,7 @@ public class Similarity {
 		System.out.println(getSimilarity(common.Common.DIRWEIGTH_STEMMER+"texte.95-1.txt.poids", 
 				common.Common.DIRWEIGTH_STEMMER+"texte.95-2.txt.poids"));
 		File f = new File(common.Common.DIRWEIGTH_STEMMER);
-		HashMap<Short,String[]> h=new HashMap<>();
+		HashMap<Integer,String[]> h=new HashMap<>();
 		 common.Common.getDirectory(f,h,".poids");
 		getSimilarDocuments(common.Common.DIRWEIGTH_STEMMER+"texte.95-1.txt.poids", h);
 	}
