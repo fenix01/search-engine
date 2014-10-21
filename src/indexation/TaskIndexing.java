@@ -21,6 +21,7 @@ public class TaskIndexing implements Runnable {
 	private Normalizer normalizer;
 	private boolean stopwords;
 	private String out_idx = "index1";
+	private Thread th;
 
 	public static void main(String[] args) throws IOException {
 	}
@@ -31,7 +32,15 @@ public class TaskIndexing implements Runnable {
 		for (int i = this.start_doc;  i < this.end_doc ; i++){
 			try {
 				System.out.println(i);
-				HashMap<String,Integer> tf_doc = TD2.getTermFrequencies(corpus.get(i)[0],normalizer,stopwords);
+
+				HashMap<String,Integer> tf_doc;
+				String doc;
+				synchronized (corpus) {
+					doc = corpus.get(i)[0];
+					
+				}
+				tf_doc = TD2.getTermFrequencies(doc,normalizer,stopwords);
+				System.out.println(doc);
 				for (Map.Entry<String, Integer> word : tf_doc.entrySet()){
 					if (index.containsKey(word.getKey())){
 						//le mot existe dans l'index, on l'ajoute dans la liste des documents
@@ -65,6 +74,10 @@ public class TaskIndexing implements Runnable {
 		
 	}
 	
+	public void start(){
+		th.start();
+	}
+	
 	public TaskIndexing(HashMap<Integer,String[]> h, int start_doc, int end_doc, Normalizer n, boolean stopwords, String out_idx){
 		this.index = new TreeMap<>();
 		this.start_doc = start_doc;
@@ -73,8 +86,7 @@ public class TaskIndexing implements Runnable {
 		this.stopwords = stopwords;
 		this.corpus = h;
 		this.out_idx = out_idx;
-		//Thread th = new Thread(this);
-		//th.start();
+		this.th = new Thread(this);
 	}
 
 }

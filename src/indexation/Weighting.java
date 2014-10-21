@@ -19,7 +19,7 @@ public class Weighting {
 
 	// écrit un fichier poids
 	public void writeWgtFile(File fileName,
-			HashMap<String, Double> wgtFile) throws IOException {
+		HashMap<String, Double> wgtFile) throws IOException {
 		FileWriter fw = null;
 		BufferedWriter bw = null;
 		try {
