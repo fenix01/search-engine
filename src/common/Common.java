@@ -195,6 +195,8 @@ public class Common {
 
 		Normalizer stemmer = new FrenchStemmer(common.Common.DIRRSC+"stop.txt");
 		Normalizer stemmer2 = new FrenchStemmer(common.Common.DIRRSC+"stop.txt");
+		Normalizer stemmer3 = new FrenchStemmer(common.Common.DIRRSC+"stop.txt");
+		Normalizer stemmer4 = new FrenchStemmer(common.Common.DIRRSC+"stop.txt");
 		
 		File fCorpus = new File(DIRRSC+"corpus.txt");
 		if (fCorpus.exists()){
@@ -209,11 +211,16 @@ public class Common {
 		}
 //		for (Map.Entry<Integer, String[]> hit : h.entrySet()) {
 //			System.out.println(hit.getKey() + "\t" + hit.getValue()[0]);
-//		}		
-		TaskIndexing ti1  = new TaskIndexing(h,0,5000,stemmer,true,"index1");
-		TaskIndexing ti2  = new TaskIndexing(h,5000,h.size(),stemmer2,true, "index2");
+//		}		 
+		loadEmptyWords();
+		TaskIndexing ti1  = new TaskIndexing(h,0,2500,stemmer,true,"index1",2500);
+		TaskIndexing ti2  = new TaskIndexing(h,2500,5000,stemmer2,true,"index2",2500);
+		TaskIndexing ti3  = new TaskIndexing(h,5000,7500,stemmer3,true, "index3",2500);
+		TaskIndexing ti4  = new TaskIndexing(h,7500,h.size(),stemmer4,true, "index4",2500);
 		ti1.start();
 		ti2.start();
+		ti3.start();
+		ti4.start();
 //		
 //		Thread thread1 = new Thread(ti1);
 //		Thread thread2 = new Thread(ti2);
