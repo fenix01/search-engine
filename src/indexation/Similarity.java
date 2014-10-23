@@ -10,7 +10,7 @@ import java.util.SortedSet;
 
 public class Similarity {
 
-
+	//Juste un commentaire pour tester Git =D T(^_^)T
 	public static double getSimilarity(String filename1, String filename2) throws IOException{
 		HashMap<String, Double> weight1 = Weighting.readWgtFile(new File(filename1));
 		HashMap<String, Double> weight2 = Weighting.readWgtFile(new File(filename2));

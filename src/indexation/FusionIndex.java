@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class FusionIndex {
-	
 	public static void mergeInvertedFiles(File invertedFile1, File invertedFile2,
 			File mergedInvertedFile) throws IOException
 			{
@@ -26,7 +25,7 @@ public class FusionIndex {
 					count++;
 					String[] splitted_line1 = line1.split("\t");
 					String[] splitted_line2 = line2.split("\t");
-					//on a dans la première case de chaque tableau le mot
+					//on a dans la premiï¿½re case de chaque tableau le mot
 					if (splitted_line1[0].equals(splitted_line2[0])){
 						//on fusionne : on ajoute les dfs, et on fusionne les listes
 						int df = 0;
@@ -42,13 +41,13 @@ public class FusionIndex {
 					}
 					//si le mot1 < mot2
 					else if (splitted_line1[0].compareTo(splitted_line2[0]) < 0){
-						//on écrit la ligne 1 dans la sortie
+						//on ï¿½crit la ligne 1 dans la sortie
 						brMerge.write(line1);
 						brMerge.newLine();
 						line1 = br1.readLine();
 					}
 					else {
-						//on écrit la ligne 2 dans la sortie
+						//on ï¿½crit la ligne 2 dans la sortie
 						brMerge.write(line2);
 						brMerge.newLine();
 						line2 = br2.readLine();
