@@ -49,7 +49,7 @@ public class Similarity {
 				common.Common.DIRWEIGTH_STEMMER+"texte.95-2.txt.poids"));
 		File f = new File(common.Common.DIRWEIGTH_STEMMER);
 		HashMap<Integer,String[]> h=new HashMap<>();
-		 common.Common.getDirectory(f,h,".poids");
+		 common.Common.getDirectory(f,h,".poids",-1);
 		getSimilarDocuments(common.Common.DIRWEIGTH_STEMMER+"texte.95-1.txt.poids", h);
 	}
 }
