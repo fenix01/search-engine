@@ -1,12 +1,15 @@
 package indexation;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 
 import common.Common;
@@ -38,6 +41,33 @@ public class TaskIndexing implements Runnable {
 			threadsIndex.add(indexName);
 		}
 		fusionIndexes(threadsIndex, "index");
+	}
+	
+	/*
+	 * permet de découper l'index selon les lettres de l'alphabet
+	 * pour les nombres, ceux-ci seront dans un fichier nbr_index
+	 */
+	public static void splitIndex(){
+		FileReader fr;
+		FileWriter fw;
+		try {
+			fr = new FileReader(Common.DIRRSC+"index");
+			fw = new FileWriter(Common.DIRRSC+"number_index");
+			BufferedReader br = new BufferedReader(fr);
+			BufferedWriter bw = new BufferedWriter(fw);
+			String line;
+			while ((line = br.readLine()) != null){
+				
+			}
+			br.close();
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
