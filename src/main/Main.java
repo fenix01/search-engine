@@ -14,6 +14,8 @@ import common.Common;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
+		
+		TaskIndexing.splitIndex();
 		File f = new File(Common.DIRCORPUS);
 
 		HashMap<Integer,String[]> h;
@@ -49,7 +51,7 @@ public class Main {
 		ti2.join();
 		
 		TaskIndexing.fusionThreadsIndexes(2);
-		
+		TaskIndexing.splitIndex();
 	}
 
 }

@@ -30,6 +30,7 @@ public class Common {
 	//false = version html
 	//true = version texte
 	public static String DIRRSC = "./rsc/";
+	public static String DIRINDEX = DIRRSC + "index/";
 	public static String DIRCORPUS = DIRRSC + "corpus/";
 
 	public static String DIRWEIGTH_STEMMER = DIRRSC + "weight/" + "stemmer/";

@@ -37,7 +37,7 @@ public class TaskIndexing implements Runnable {
 	public static void fusionThreadsIndexes(int threads_count){
 		LinkedList<String> threadsIndex = new LinkedList<>();
 		for (int i = 0; i < threads_count ; i++){
-			String indexName =  Common.DIRRSC+"index"+i;
+			String indexName =  Common.DIRINDEX+"index"+i;
 			threadsIndex.add(indexName);
 		}
 		fusionIndexes(threadsIndex, "index");
@@ -51,14 +51,31 @@ public class TaskIndexing implements Runnable {
 		FileReader fr;
 		FileWriter fw;
 		try {
-			fr = new FileReader(Common.DIRRSC+"index");
-			fw = new FileWriter(Common.DIRRSC+"number_index");
+			fr = new FileReader(Common.DIRINDEX+"index");
 			BufferedReader br = new BufferedReader(fr);
+			
+			String line = br.readLine();
+			String line2 = br.readLine();
+			fw = new FileWriter(Common.DIRINDEX+line.charAt(0)+"_index",true);
 			BufferedWriter bw = new BufferedWriter(fw);
-			String line;
-			while ((line = br.readLine()) != null){
-				
+			while (line2 != null){
+				if (line.charAt(0) == line2.charAt(0)){
+					bw.write(line);
+					bw.newLine();
+				}
+				else {
+					bw.write(line);
+					bw.newLine();
+					bw.close();
+					fw = new FileWriter(Common.DIRINDEX+line2.charAt(0)+"_index",true);
+					bw = new BufferedWriter(fw);
+				}
+				line = line2;
+				line2 = br.readLine();
 			}
+			bw.write(line);
+			bw.newLine();
+			bw.close();
 			br.close();
 			
 		} catch (FileNotFoundException e) {
@@ -121,7 +138,7 @@ public class TaskIndexing implements Runnable {
 	
 	private void saveTempIndex(){
 		try {
-			String out_idx = Common.DIRRSC+this.name_idx+this.cur_index;
+			String out_idx = Common.DIRINDEX+this.name_idx+this.cur_index;
 			this.tmp_idx.add(out_idx);
 			TD3.saveInvertedFile(index, new File(out_idx));
 			this.index.clear();
@@ -152,7 +169,7 @@ public class TaskIndexing implements Runnable {
 			File f1 = new File(outIndex1);
 			File f2 = new File(outIndex2);
 			//on prépare un nouvelle index temporaire fusion de f1 et f2
-			String outIndexMerge = Common.DIRRSC+nameIndex+counter;
+			String outIndexMerge = Common.DIRINDEX+nameIndex+counter;
 			counter++;
 			//on fusionne les deux indexes temporaires
 			File fMerge = new File(outIndexMerge);
