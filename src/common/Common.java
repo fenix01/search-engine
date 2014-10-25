@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -180,6 +181,46 @@ public class Common {
 			e.printStackTrace();
 		}
 		return listFiles;
+	}
+	
+	public static String binarySearch(RandomAccessFile rdFile, String word){
+		try {
+			long start = 0;
+			long end = rdFile.length();
+			String curWord,line;
+			while (start <= end){
+				long mid = start + (end - start) / 2;
+				rdFile.seek(mid);
+				rdFile.readLine();
+				line = rdFile.readLine();
+				curWord = line.split("\t")[0];
+				if (curWord.compareTo(word) >= 0){
+					end = mid - 1;
+				}
+				else {
+					start = mid + 1;
+				}
+			}
+			rdFile.seek(start);
+			rdFile.readLine();
+			line = rdFile.readLine();
+			return line;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/*
+	 * méthode qui renvoie pour un mot donné la ligne d'informations de l'index
+	 */
+	public static String getWordIndex(String word) throws FileNotFoundException{
+		char c = word.charAt(0);
+		File f = new File(DIRINDEX+c+"_index");
+		RandomAccessFile rdFile = new RandomAccessFile(f, "r");
+		return binarySearch(rdFile, word);
+		
 	}
 	
 	public static void writeRequest(String content) throws IOException{
