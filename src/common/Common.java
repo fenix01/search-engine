@@ -32,7 +32,8 @@ public class Common {
 	//true = version texte
 	public static String DIRRSC = "./rsc/";
 	public static String DIRINDEX = DIRRSC + "index/";
-	public static String DIRCORPUS = DIRRSC + "corpus/";
+	//public static String DIRCORPUS = DIRRSC + "corpus/";
+	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 
 	public static String DIRWEIGTH_STEMMER = DIRRSC + "weight/" + "stemmer/";
 	public static String DIRWEIGTH_TOKENIZER = DIRRSC + "weight/" + "tokenizer/";

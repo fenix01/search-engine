@@ -188,7 +188,7 @@ public class TaskIndexing implements Runnable {
 		//on renomme à présent l'index temporaire résultat de la fusion de tous les indexes temporaires
 		String tmpIndex = tmpIndexes.poll();
 		File f = new File(tmpIndex);
-		String outIndex = Common.DIRRSC+nameIndex;
+		String outIndex = Common.DIRINDEX+nameIndex;
 		f.renameTo(new File(outIndex));
 	}
 
