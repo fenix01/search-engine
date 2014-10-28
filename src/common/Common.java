@@ -1,7 +1,5 @@
 package common;
 
-import indexation.TaskIndexing;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,10 +16,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import tools.FrenchStemmer;
-import tools.FrenchTokenizer;
-import tools.Normalizer;
 
 //Classe qui contient des méthodes communes pour les différents package
 
