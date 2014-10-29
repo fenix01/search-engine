@@ -179,15 +179,41 @@ public class Common {
 		return listFiles;
 	}
 	
+	/**
+	 * cherche un mot dans un index de façon séquentielle
+	 * @param f fichier d'index
+	 * @param word mot à rechercher
+	 * @return la ligne de l'index avec les docs, les poids, les tfs, et le df
+	 * @throws IOException
+	 */
+	public static String sequentialSearch(File f, String word) throws IOException{
+		FileReader fr;
+		fr = new FileReader(f);
+		BufferedReader br = new BufferedReader(fr);
+		String line = "";
+		boolean found = false;
+		while (!found && line != null){
+			line = br.readLine();
+			String word_ = line.split("\t")[0];
+			if (word_.equals(word)){
+				found = true;
+			}
+		}
+		br.close();
+		if (found)
+			return line;
+		else return "";
+	}
+	
 	public static String binarySearch(RandomAccessFile rdFile, String word){
 		try {
 			long start = 0;
 			long end = rdFile.length();
-			String curWord,line;
+			String curWord,line,line2 = null;
 			while (start <= end){
 				long mid = start + (end - start) / 2;
 				rdFile.seek(mid);
-				rdFile.readLine();
+				line2 = rdFile.readLine();
 				line = rdFile.readLine();
 				curWord = line.split("\t")[0];
 				if (curWord.compareTo(word) >= 0){
@@ -200,7 +226,11 @@ public class Common {
 			rdFile.seek(start);
 			rdFile.readLine();
 			line = rdFile.readLine();
-			return line;
+			if (word.equals(line.split("\t")[0]))
+				return line;
+			else if (word.equals(line2.split("\t")[0]))
+				return line2;
+			else return "";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
