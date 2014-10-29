@@ -6,6 +6,8 @@ import indexation.Weighting;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.TreeMap;
 
@@ -33,8 +35,7 @@ public class Main {
 		
 		File fCorpus = new File(Common.DIRRSC+"corpus.txt");
 		if (fCorpus.exists()){
-			h = Common.readDirectory();
-			
+			h = Common.readDirectory();			
 		}
 		else {
 			h = new HashMap<>();
@@ -42,7 +43,13 @@ public class Main {
 			Common.writeDirectory(h);
 			
 		}
-	 
+		
+		File index_dir = new File(Common.DIRINDEX);
+		index_dir.mkdir();
+		for(File file : index_dir.listFiles()){
+			file.delete();
+		}
+		
 		Common.loadEmptyWords();
 		TaskIndexing ti1  = new TaskIndexing(h,0,documents/2,stemmer,true,"index0",5000);
 		TaskIndexing ti2  = new TaskIndexing(h,documents/2,h.size(),stemmer2,true,"index1",5000);

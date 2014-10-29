@@ -98,8 +98,9 @@ public class Common {
 	    return !word.toLowerCase().matches(regexp) || Common.emptyWords.contains(word.toLowerCase());
 	}
 
-	// Fonction qui renvoit la liste des fichiers contenus dans un répertoire en
-	// fonction de son extension
+	/**
+	 *  Fonction qui renvoit la liste des fichiers contenus dans un répertoire en fonction de son extension
+	 */
 	public static void getDirectory(File f, HashMap<Integer,String[]> listFiles, final String ext, int max_entries) 
 			throws IOException {
 		
