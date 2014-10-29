@@ -1,7 +1,5 @@
 package common;
 
-import indexation.TaskIndexing;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,11 +17,7 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import tools.FrenchStemmer;
-import tools.FrenchTokenizer;
-import tools.Normalizer;
-
-//Classe qui contient des méthodes communes pour les différentes package
+//Classe qui contient des méthodes communes pour les différents package
 
 public class Common {
 
@@ -30,7 +25,9 @@ public class Common {
 	//false = version html
 	//true = version texte
 	public static String DIRRSC = "./rsc/";
-	public static String DIRCORPUS = DIRRSC + "lemonde/";
+	public static String DIRINDEX = DIRRSC + "index/";
+	//public static String DIRCORPUS = DIRRSC + "corpus/";
+	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 
 	public static String DIRWEIGTH_STEMMER = DIRRSC + "weight/" + "stemmer/";
 	public static String DIRWEIGTH_TOKENIZER = DIRRSC + "weight/" + "tokenizer/";
@@ -103,7 +100,11 @@ public class Common {
 
 	// Fonction qui renvoit la liste des fichiers contenus dans un répertoire en
 	// fonction de son extension
-	public static void getDirectory(File f, HashMap<Integer,String[]> listFiles, final String ext) throws IOException {
+	public static void getDirectory(File f, HashMap<Integer,String[]> listFiles, final String ext, int max_entries) 
+			throws IOException {
+		
+		if (max_entries != -1 && listFiles.size() >= max_entries)
+			return;
 		// Liste des fichiers du répertoire
 		// ajouter un filtre (FileNameFilter) sur les noms
 		// des fichiers si nécessaire
@@ -112,6 +113,7 @@ public class Common {
 			
 			@Override
 			public boolean accept(File pathname) {
+				//filtre les fichiers en ignorant les fichiers ne commençant pas par ext
 				if (!pathname.isDirectory() && !pathname.getName().endsWith(ext))
 					return false;
 				return true;
@@ -120,7 +122,7 @@ public class Common {
 
 		for (File file_ : ltFiles) {
 			if(file_.isDirectory())
-					getDirectory(file_, listFiles,ext);
+					getDirectory(file_, listFiles,ext,max_entries);
 			else{
 				String[] fileStr = new String[2];
 				fileStr[0] = file_.getCanonicalPath();
@@ -176,8 +178,45 @@ public class Common {
 		return listFiles;
 	}
 	
+	public static String binarySearch(RandomAccessFile rdFile, String word){
+		try {
+			long start = 0;
+			long end = rdFile.length();
+			String curWord,line;
+			while (start <= end){
+				long mid = start + (end - start) / 2;
+				rdFile.seek(mid);
+				rdFile.readLine();
+				line = rdFile.readLine();
+				curWord = line.split("\t")[0];
+				if (curWord.compareTo(word) >= 0){
+					end = mid - 1;
+				}
+				else {
+					start = mid + 1;
+				}
+			}
+			rdFile.seek(start);
+			rdFile.readLine();
+			line = rdFile.readLine();
+			return line;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
-
+	/*
+	 * méthode qui renvoie pour un mot donné la ligne d'informations de l'index
+	 */
+	public static String getWordIndex(String word) throws FileNotFoundException{
+		char c = word.charAt(0);
+		File f = new File(DIRINDEX+c+"_index");
+		RandomAccessFile rdFile = new RandomAccessFile(f, "r");
+		return binarySearch(rdFile, word);
+		
+	}
 	
 	public static void writeRequest(String content) throws IOException{
 		File f = new File(DIRRSC+"request.htm");
@@ -186,40 +225,6 @@ public class Common {
 		FileWriter fw = new FileWriter(f);
 		fw.write(content);
 		fw.close();
-	}
-	
-	public static void main(String[] args) throws IOException {
-		//File f = new File(Common.DIRCORPUS);
-		File f = new File("/partage/public/iri/projetIRI/corpus/0000/");
-		HashMap<Integer,String[]> h;
-
-		Normalizer stemmer = new FrenchStemmer(common.Common.DIRRSC+"stop.txt");
-		Normalizer stemmer2 = new FrenchStemmer(common.Common.DIRRSC+"stop.txt");
-		
-		File fCorpus = new File(DIRRSC+"corpus.txt");
-		if (fCorpus.exists()){
-			h = readDirectory();
-			
-		}
-		else {
-			h = new HashMap<>();
-			Common.getDirectory(f,h,".txt");
-			writeDirectory(h);
-			
-		}
-//		for (Map.Entry<Integer, String[]> hit : h.entrySet()) {
-//			System.out.println(hit.getKey() + "\t" + hit.getValue()[0]);
-//		}		
-		TaskIndexing ti1  = new TaskIndexing(h,0,5000,stemmer,true,"index1");
-		TaskIndexing ti2  = new TaskIndexing(h,5000,h.size(),stemmer2,true, "index2");
-		ti1.start();
-		ti2.start();
-//		
-//		Thread thread1 = new Thread(ti1);
-//		Thread thread2 = new Thread(ti2);
-//		thread1.start();
-//		thread2.start();
-		
 	}
 
 }
