@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import common.Common;
+import common.Utils;
 import td.td2.TD2;
 import td.td3.TD3;
 import tools.Normalizer;
@@ -97,38 +98,42 @@ public class TaskIndexing implements Runnable {
 
 				HashMap<String, Integer> tf_doc;
 				String doc;
-				synchronized (corpus) {
 					doc = corpus.get(i)[0];
 
-				}
 				tf_doc = TD2.getTermFrequencies(doc, normalizer, stopwords);
 				for (Map.Entry<String, Integer> word : tf_doc.entrySet()) {
-					if (!common.Common.isEmptyWord(word.getKey())) {
-						if (index.containsKey(word.getKey())) {
+					TreeMap<Integer, Integer> listDocs = index.get(word.getKey());
+					if (!Common.isEmptyWord(word.getKey())) {
+						
+						if (listDocs != null) {
 							// le mot existe dans l'index, on l'ajoute dans la
 							// liste des documents
-							TreeMap<Integer, Integer> list_docs = index
-									.get(word.getKey());
-							list_docs.put(i, word.getValue());
-							index.put(word.getKey(), list_docs);
+							listDocs.put(i, word.getValue());
+							index.put(word.getKey(), listDocs);
 						} else {
 							TreeMap<Integer, Integer> list_docs = new TreeMap<>();
 							list_docs.put(i, word.getValue());
 							index.put(word.getKey(), list_docs);
 						}
 					}
-
-				}
-
+				}	
+				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if (compteur == this.reached){
+			if(Utils.getUsedMemory()>=1000000000){
+			System.out.println(i);
+			System.out.println(Utils.memoryInfo());
+			saveTempIndex();
+			}
+			/*if (compteur == this.reached){
+					System.out.println(i);
+					System.out.println(Utils.memoryInfo());
 					compteur = 0;
 					saveTempIndex();
 			}
-			compteur++;
+			compteur++;*/
 		}
 		saveTempIndex();
 		fusionIndexes(this.tmp_idx,this.name_idx);
@@ -143,6 +148,7 @@ public class TaskIndexing implements Runnable {
 			TD3.saveInvertedFile(index, new File(out_idx));
 			this.index.clear();
 			this.cur_index++;
+			System.gc();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -249,6 +249,7 @@ public class Common {
 		
 	}
 	
+	
 	public static void writeRequest(String content) throws IOException{
 		File f = new File(DIRRSC+"request.htm");
 		if (f.exists())

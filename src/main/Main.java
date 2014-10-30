@@ -17,12 +17,14 @@ import common.Common;
 
 public class Main {
 	
-	public static int documents = 50000;
+	public static int documents = 100000;
 
 	public static void main(String[] args) throws IOException {
 		
 //		RandomAccessFile rdFile = new RandomAccessFile(new File(Common.DIRINDEX+"c_index"), "r");
 //		System.out.println(Common.binarySearch(rdFile, "chewew"));
+		System.out.println("debut");
+		System.in.read();
 		
 		File f = new File(Common.DIRCORPUS);
 
@@ -51,22 +53,27 @@ public class Main {
 		}
 		
 		Common.loadEmptyWords();
-		TaskIndexing ti1  = new TaskIndexing(h,0,documents/2,stemmer,true,"index0",5000);
-		TaskIndexing ti2  = new TaskIndexing(h,documents/2,h.size(),stemmer2,true,"index1",5000);
-//		TaskIndexing ti3  = new TaskIndexing(h,5000,7500,stemmer3,true, "index2",2500);
-//		TaskIndexing ti4  = new TaskIndexing(h,7500,h.size(),stemmer4,true, "index3",2500);
+		System.out.println("index_doc");
+		System.in.read();
+	
+		TaskIndexing ti1  = new TaskIndexing(h,0,h.size(),stemmer,true,"index0",5000);
+		//TaskIndexing ti2  = new TaskIndexing(h,documents/2,h.size(),stemmer2,true,"index1",5000);
+		//TaskIndexing ti3  = new TaskIndexing(h,documents/2,(3*documents)/4,stemmer3,true, "index2",2500);
+		//TaskIndexing ti4  = new TaskIndexing(h,(3*documents)/4,h.size(),stemmer4,true, "index3",2500);
 		ti1.start();
-		ti2.start();
-//		ti3.start();
-//		ti4.start();
+		//ti2.start();
+		//ti3.start();
+		//ti4.start();
 		
 		ti1.join();
-		ti2.join();
+		//ti2.join();
+		System.out.println("threads cree");
+		System.in.read();
 		
 		TaskIndexing.fusionThreadsIndexes(2);
 		TaskIndexing.splitIndex();
-		
-		
+		System.out.println("index_inv cree");
+		System.in.read();
 		
 		File fIndexes = new File(Common.DIRINDEX);
 		HashMap<Integer,String[]> indexes = new HashMap<>();
