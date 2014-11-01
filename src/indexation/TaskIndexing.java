@@ -95,16 +95,16 @@ public class TaskIndexing implements Runnable {
 		for (int i = this.start_doc; i < this.end_doc; i++) {
 			try {
 				// System.out.println(i);
-
 				HashMap<String, Integer> tf_doc;
+				
 				String doc;
-					doc = corpus.get(i)[0];
+				doc = corpus.get(i)[0];
 
 				tf_doc = TD2.getTermFrequencies(doc, normalizer, stopwords);
 				for (Map.Entry<String, Integer> word : tf_doc.entrySet()) {
-					TreeMap<Integer, Integer> listDocs = index.get(word.getKey());
+					
 					if (!Common.isEmptyWord(word.getKey())) {
-						
+						TreeMap<Integer, Integer> listDocs = index.get(word.getKey());
 						if (listDocs != null) {
 							// le mot existe dans l'index, on l'ajoute dans la
 							// liste des documents
@@ -122,18 +122,18 @@ public class TaskIndexing implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			if(Utils.getUsedMemory()>=1000000000){
-			System.out.println(i);
-			System.out.println(Utils.memoryInfo());
-			saveTempIndex();
-			}
-			/*if (compteur == this.reached){
+//			if(Utils.getUsedMemory()>=1000000000){
+//			System.out.println(i);
+//			System.out.println(Utils.memoryInfo());
+//			saveTempIndex();
+//			}
+			if (compteur == this.reached){
 					System.out.println(i);
 					System.out.println(Utils.memoryInfo());
 					compteur = 0;
 					saveTempIndex();
 			}
-			compteur++;*/
+			compteur++;
 		}
 		saveTempIndex();
 		fusionIndexes(this.tmp_idx,this.name_idx);
