@@ -93,7 +93,7 @@ public class Main {
 				//fusionne les indexes créé par les 2 threads
 				TaskIndexing.fusionThreadsIndexes(2);
 				//découper l'index en plusieurs index
-				TaskIndexing.splitIndex();
+				TaskIndexing.splitIndex(2);
 				break;
 			case 4:
 				File fIndexes = new File(Common.DIRINDEX);
