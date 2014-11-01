@@ -38,7 +38,7 @@ public class Main {
 			System.out.println("Indexer le corpus : tapez 3");
 			System.out.println("Parcours les indexes pour inclure le poids,"+
 			"et générer le fichier somme des poids : tapez 4");
-			//System.out.println("Supprimer les indexes, le fichier poids, et le fichier corpus");
+			System.out.println("Supprimer les indexes, le fichier poids, et le fichier corpus : tapez 8");
 			System.out.println("quitter : tapez 9");
 			command = sc.nextInt();
 			switch (command) {
@@ -70,14 +70,6 @@ public class Main {
 				// FrenchStemmer(common.Common.DIRRSC+"stop.txt");
 				// Normalizer stemmer4 = new
 				// FrenchStemmer(common.Common.DIRRSC+"stop.txt");
-
-				
-				//permet de supprimer les anciens indexes, et de créer le répertoire
-				File index_dir = new File(Common.DIRINDEX);
-				index_dir.mkdir();
-				for (File file : index_dir.listFiles()) {
-					file.delete();
-				}
 				
 				//permet de démarrer 2 threads qui vont effectuer de la fusion
 				TaskIndexing ti1 = new TaskIndexing(h, 0, h.size() / 2, stemmer, true,
@@ -119,6 +111,15 @@ public class Main {
 				weight_1.join();
 				weight_2.join();
 				Weighting.saveWeights(Common.DIRINDEX + "poids_total", sum_weights);
+				break;
+			case 8:
+				//permet de supprimer les anciens indexes, et de créer le répertoire
+				File index_dir = new File(Common.DIRINDEX);
+				index_dir.mkdir();
+				for (File file : index_dir.listFiles()) {
+					file.delete();
+				}
+				fRevCorpus.delete();
 				break;
 			case 9:
 				stop = true;
