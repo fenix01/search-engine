@@ -20,9 +20,6 @@ import td.td3.TD3;
 import tools.Normalizer;
 
 public class TaskIndexing implements Runnable {
-
-	//extension de l'index
-	private static String extIDX = ".idx";
 	
 	private int start_doc = 0;
 	private int end_doc = 0;
@@ -47,7 +44,7 @@ public class TaskIndexing implements Runnable {
 	public static void fusionThreadsIndexes(int threads_count){
 		LinkedList<String> threadsIndex = new LinkedList<>();
 		for (int i = 0; i < threads_count ; i++){
-			String indexName =  Common.DIRINDEX+"index"+i+extIDX;
+			String indexName =  Common.DIRINDEX+"index"+i+Common.extIDX;
 			threadsIndex.add(indexName);
 		}
 		fusionIndexes(threadsIndex, "index");
@@ -78,7 +75,7 @@ public class TaskIndexing implements Runnable {
 		FileReader fr;
 		FileWriter fw;
 		try {
-			File fIndex = new File(Common.DIRINDEX+"index"+extIDX);
+			File fIndex = new File(Common.DIRINDEX+"index"+Common.extIDX);
 			fr = new FileReader(fIndex);
 			BufferedReader br = new BufferedReader(fr);
 			
@@ -89,7 +86,7 @@ public class TaskIndexing implements Runnable {
 			String firstOccLine2;
 			firstOccLine1 = firstOcc(line1,x);
 			firstOccLine2 = firstOcc(line2,x);
-			fw = new FileWriter(Common.DIRINDEX+firstOccLine1+extIDX,true);
+			fw = new FileWriter(Common.DIRINDEX+firstOccLine1+Common.extIDX,true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			while (line2 != null){
 				if (firstOccLine1.equals(firstOccLine2)){
@@ -100,7 +97,7 @@ public class TaskIndexing implements Runnable {
 					bw.write(line1);
 					bw.newLine();
 					bw.close();
-					fw = new FileWriter(Common.DIRINDEX+firstOccLine2+extIDX,true);
+					fw = new FileWriter(Common.DIRINDEX+firstOccLine2+Common.extIDX,true);
 					bw = new BufferedWriter(fw);
 				}
 				line1 = line2;
@@ -178,7 +175,7 @@ public class TaskIndexing implements Runnable {
 	
 	private void saveTempIndex(){
 		try {
-			String out_idx = Common.DIRINDEX+this.name_idx+this.cur_index+extIDX;
+			String out_idx = Common.DIRINDEX+this.name_idx+this.cur_index+Common.extIDX;
 			this.tmp_idx.add(out_idx);
 			TD3.saveInvertedFile(index, new File(out_idx));
 			this.index.clear();
@@ -209,7 +206,7 @@ public class TaskIndexing implements Runnable {
 			File f1 = new File(outIndex1);
 			File f2 = new File(outIndex2);
 			//on prépare un nouvelle index temporaire fusion de f1 et f2
-			String outIndexMerge = Common.DIRINDEX+nameIndex+counter+extIDX;
+			String outIndexMerge = Common.DIRINDEX+nameIndex+counter+Common.extIDX;
 			counter++;
 			//on fusionne les deux indexes temporaires
 			File fMerge = new File(outIndexMerge);
@@ -228,7 +225,7 @@ public class TaskIndexing implements Runnable {
 		//on renomme à présent l'index temporaire résultat de la fusion de tous les indexes temporaires
 		String tmpIndex = tmpIndexes.poll();
 		File f = new File(tmpIndex);
-		String outIndex = Common.DIRINDEX+nameIndex+extIDX;
+		String outIndex = Common.DIRINDEX+nameIndex+Common.extIDX;
 		f.renameTo(new File(outIndex));
 	}
 

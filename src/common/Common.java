@@ -20,14 +20,16 @@ import java.util.TreeSet;
 //Classe qui contient des méthodes communes pour les différents package
 
 public class Common {
+	
+	//extension de l'index
+	public static String extIDX = ".idx";
+	//extension du fichier poids
+	public static String extWEIGHT = ".wgt";	
 
-	public static Boolean Choice = false;
-	//false = version html
-	//true = version texte
 	public static String DIRRSC = "./rsc/";
 	public static String DIRINDEX = DIRRSC + "index/";
-	//public static String DIRCORPUS = DIRRSC + "corpus/";
-	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
+	public static String DIRCORPUS = DIRRSC + "corpus/";
+	//public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 
 	public static String DIRWEIGTH_STEMMER = DIRRSC + "weight/" + "stemmer/";
 	public static String DIRWEIGTH_TOKENIZER = DIRRSC + "weight/" + "tokenizer/";

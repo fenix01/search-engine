@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import common.Common;
+
 public class Weighting implements Runnable {
 
 	private Thread th;
@@ -40,7 +42,9 @@ public class Weighting implements Runnable {
 	 */
 	public void updateSumWeights(String index){
 		File fIndex = new File(index);
-		File fTmpIndex = new File(index.replaceFirst("_index", "0_index"));
+		
+		String tmpIDX = index.substring(0, index.lastIndexOf(".idx"))+0+Common.extIDX;
+		File fTmpIndex = new File(tmpIDX);
 		FileReader fr = null;
 		BufferedReader br = null;
 		FileWriter fwTemp = null;

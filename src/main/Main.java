@@ -99,7 +99,7 @@ public class Main {
 				File fIndexes = new File(Common.DIRINDEX);
 				HashMap<Integer, String[]> indexes = new HashMap<>();
 				TreeMap<Integer, Double> sum_weights = new TreeMap<>();
-				Common.getDirectory(fIndexes, indexes, "", -1);
+				Common.getDirectory(fIndexes, indexes, ".idx", -1);
 				Weighting weight_1 = new Weighting(sum_weights, indexes, 0,
 						indexes.size() / 2, h.size());
 				Weighting weight_2 = new Weighting(sum_weights, indexes,
@@ -110,7 +110,7 @@ public class Main {
 				
 				weight_1.join();
 				weight_2.join();
-				Weighting.saveWeights(Common.DIRINDEX + "poids_total", sum_weights);
+				Weighting.saveWeights(Common.DIRINDEX + "docWeight"+Common.extWEIGHT, sum_weights);
 				break;
 			case 8:
 				//permet de supprimer les anciens indexes, et de créer le répertoire
