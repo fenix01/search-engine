@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -26,9 +25,9 @@ public class TaskIndexing implements Runnable {
 	private HashMap<Integer, String[]> corpus;
 
 	// on stocke l'index sous la forme d'un treemap de
-	// String = mot en clé, et un HashMap<DocID,tf> en valeur
-	// 2 entiers sont plus légers en mémoire qu'une string de DocID:Tf
-	private TreeMap<String, HashMap<Integer, Integer>> index;
+	// String = mot en clé, et un TreeMap<DocID,tf> en valeur
+	// pour la recherche on a besoin de trier les documents
+	private TreeMap<String, TreeMap<Integer, Integer>> index;
 	private Normalizer normalizer;
 	private boolean stopwords;
 	private LinkedList<String> tmp_idx;
@@ -74,6 +73,7 @@ public class TaskIndexing implements Runnable {
 	 * 
 	 * @param x
 	 */
+	
 	public static void splitIndex(int x) {
 		FileReader fr;
 		FileWriter fw;
@@ -121,7 +121,7 @@ public class TaskIndexing implements Runnable {
 			bw.newLine();
 			bw.close();
 			br.close();
-			//fIndex.delete();
+			fIndex.delete();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -148,7 +148,7 @@ public class TaskIndexing implements Runnable {
 				for (Map.Entry<String, Integer> word : tf_doc.entrySet()) {
 
 					if (!Common.isEmptyWord(word.getKey())) {
-						HashMap<Integer, Integer> listDocs = index.get(word
+						TreeMap<Integer, Integer> listDocs = index.get(word
 								.getKey());
 						if (listDocs != null) {
 							// le mot existe dans l'index, on l'ajoute dans la
@@ -156,7 +156,7 @@ public class TaskIndexing implements Runnable {
 							listDocs.put(i, word.getValue());
 							index.put(word.getKey(), listDocs);
 						} else {
-							HashMap<Integer, Integer> list_docs = new HashMap<>();
+							TreeMap<Integer, Integer> list_docs = new TreeMap<>();
 							list_docs.put(i, word.getValue());
 							index.put(word.getKey(), list_docs);
 						}

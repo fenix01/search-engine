@@ -51,12 +51,12 @@ public class TD3 {
 //	}
 
 	public static void saveInvertedFile(
-			TreeMap<String, HashMap<Integer,Integer>> invertedFile, File outFile)
+			TreeMap<String, TreeMap<Integer,Integer>> invertedFile, File outFile)
 			throws IOException {
 		FileWriter fw = new FileWriter(outFile);
-		for (Entry<String, HashMap<Integer, Integer>> word : invertedFile.entrySet()) {
+		for (Entry<String, TreeMap<Integer, Integer>> word : invertedFile.entrySet()) {
 			String word_ = word.getKey();
-			HashMap<Integer,Integer> fileList = word.getValue();
+			TreeMap<Integer,Integer> fileList = word.getValue();
 			String line = word_ + "\t" + fileList.size()+"\t";
 			String files = "";
 			int i = 0;

@@ -13,6 +13,7 @@ import java.util.Scanner;
 import java.util.TreeMap;
 
 import tools.FrenchStemmer;
+import tools.FrenchTokenizer;
 import tools.Normalizer;
 import common.Common;
 
@@ -71,11 +72,19 @@ public class Main {
 				// Normalizer stemmer4 = new
 				// FrenchStemmer(common.Common.DIRRSC+"stop.txt");
 				
+				//on créé 2 normalizer(tokenizer) pour les deux threads
+				Normalizer token = new FrenchTokenizer(common.Common.DIRRSC
+						+ "stop.txt");
+				Normalizer token2 = new FrenchTokenizer(common.Common.DIRRSC
+						+ "stop.txt");
+				
+				
+				
 				//permet de démarrer 2 threads qui vont effectuer de la fusion
-				TaskIndexing ti1 = new TaskIndexing(h, 0, h.size() / 2, stemmer, true,
+				TaskIndexing ti1 = new TaskIndexing(h, 0, h.size() / 2, token, true,
 						"index0", 5000);
 				TaskIndexing ti2 = new TaskIndexing(h, h.size() / 2, h.size(),
-						stemmer2, true, "index1", 5000);
+						token2, true, "index1", 5000);
 				// TaskIndexing ti3 = new
 				// TaskIndexing(h,documents/2,(3*documents)/4,stemmer3,true,
 				// "index2",2500);
