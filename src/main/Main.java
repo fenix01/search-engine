@@ -3,12 +3,16 @@ package main;
 import indexation.TaskIndexing;
 import indexation.Weighting;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -21,10 +25,11 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		// liste des fichiers du corpus
-		HashMap<Integer, String[]> h = null;
-		File fRevCorpus = new File(Common.DIRRSC + "corpus.txt");
+		TreeMap<Integer, String[]> h = null;
+		File fRevCorpus = new File(Common.DIRRSC + "0.corpus");
 		File fCorpus = new File(Common.DIRCORPUS);
-
+		int nb_thread=4;
+		int nb_doc=0;
 		//permet de charger les mots vides
 		Common.loadEmptyWords();
 		
@@ -46,73 +51,71 @@ public class Main {
 			//lister les fichiers du corpus
 			case 1:
 				System.out.println("Nombre de fichiers à indexer");
-				int nbrDocs = sc.nextInt();
+				nb_doc = sc.nextInt();
 				
-				h = new HashMap<>();
-				Common.getDirectory(fCorpus, h, ".txt", nbrDocs);
-				Common.writeDirectory(h);
+				h = new TreeMap<>();
+				Common.getDirectory(fCorpus, h, ".txt", nb_doc);
+				Common.writeDirectory(h,nb_thread,nb_doc);
+				
 				break;
 			//lire la liste des fichiers du corpus
 			case 2:
 				if (!fRevCorpus.exists())
 					System.out.println("Attention le fichier n'existe pas, appelez la commande 1!");
 				else {
-					h = Common.readDirectory();
+					FileReader fr=new FileReader(fRevCorpus);
+					 BufferedReader br = new BufferedReader(fr);
+					 String line=br.readLine();
+					 int cpt=0;
+					while(line !=null){
+						cpt++;
+						line=br.readLine();
+					}
+					nb_doc=cpt*nb_thread;
+					System.out.println(nb_doc);
 				}
 				break;
 			//Indexer le corpus
 			case 3:
-				//on créé 2 normalizer pour les deux threads
-				Normalizer stemmer = new FrenchStemmer(common.Common.DIRRSC
-						+ "stop.txt");
-				Normalizer stemmer2 = new FrenchStemmer(common.Common.DIRRSC
-						+ "stop.txt");
-				// Normalizer stemmer3 = new
-				// FrenchStemmer(common.Common.DIRRSC+"stop.txt");
-				// Normalizer stemmer4 = new
-				// FrenchStemmer(common.Common.DIRRSC+"stop.txt");
 				
-				//on créé 2 normalizer(tokenizer) pour les deux threads
-				Normalizer token = new FrenchTokenizer(common.Common.DIRRSC
-						+ "stop.txt");
-				Normalizer token2 = new FrenchTokenizer(common.Common.DIRRSC
-						+ "stop.txt");
+				Normalizer stemmer[]=new Normalizer[nb_thread];
+				Normalizer tokenizer[]=new Normalizer[nb_thread];
 				
+				for(int i=0;i<nb_thread;i++){
+					stemmer[i]=new FrenchStemmer(common.Common.DIRRSC
+							+ "stop.txt");
+					tokenizer[i]=new FrenchTokenizer(common.Common.DIRRSC
+							+ "stop.txt");
+				}
 				
+				TaskIndexing index[]=new TaskIndexing[nb_thread];
 				
-				//permet de démarrer 2 threads qui vont effectuer de la fusion
-				TaskIndexing ti1 = new TaskIndexing(h, 0, h.size() / 2, token, true,
-						"index0", 5000);
-				TaskIndexing ti2 = new TaskIndexing(h, h.size() / 2, h.size(),
-						token2, true, "index1", 5000);
-				// TaskIndexing ti3 = new
-				// TaskIndexing(h,documents/2,(3*documents)/4,stemmer3,true,
-				// "index2",2500);
-				// TaskIndexing ti4 = new
-				// TaskIndexing(h,(3*documents)/4,h.size(),stemmer4,true,
-				// "index3",2500);
+				for(int i=0;i<nb_thread;i++){
+					index[i]=new TaskIndexing(i+".corpus", tokenizer[i], true,
+							"index"+i, 10000/nb_thread);
+				}
 				
-				ti1.start();
-				ti2.start();
-				// ti3.start();
-				// ti4.start();
-				ti1.join();
-				ti2.join();
-				
+				for(int i=0;i<nb_thread;i++){
+					index[i].start();
+				}
+				for(int i=0;i<nb_thread;i++){
+					index[i].join();
+				}
+			
 				//fusionne les indexes créé par les 2 threads
-				TaskIndexing.fusionThreadsIndexes(2);
+				TaskIndexing.fusionThreadsIndexes(nb_thread);
 				//découper l'index en plusieurs index
 				TaskIndexing.splitIndex(2);
 				break;
 			case 4:
 				File fIndexes = new File(Common.DIRINDEX);
-				HashMap<Integer, String[]> indexes = new HashMap<>();
+				TreeMap<Integer, String[]> indexes = new TreeMap<>();
 				TreeMap<Integer, Double> sum_weights = new TreeMap<>();
 				Common.getDirectory(fIndexes, indexes, ".idx", -1);
 				Weighting weight_1 = new Weighting(sum_weights, indexes, 0,
-						indexes.size() / 2, h.size());
+						indexes.size() / 2, nb_doc);
 				Weighting weight_2 = new Weighting(sum_weights, indexes,
-						indexes.size() / 2, indexes.size(), h.size());
+						indexes.size() / 2, indexes.size(), nb_doc);
 				
 				weight_1.start();
 				weight_2.start();

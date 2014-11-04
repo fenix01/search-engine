@@ -16,13 +16,13 @@ public class Weighting implements Runnable {
 
 	private Thread th;
 	private TreeMap<Integer,Double> sum_weights;
-	private HashMap<Integer, String[]> index;
+	private TreeMap<Integer, String[]> index;
 	private int start_doc = 0;
 	private int end_doc = 0;
 	private int sizeCorpus = 0;
 	
 	
-	public Weighting(TreeMap<Integer,Double> weights, HashMap<Integer, String[]> index,
+	public Weighting(TreeMap<Integer,Double> weights, TreeMap<Integer, String[]> index,
 			int start_doc, int end_doc, int sizeCorpus){
 		this.th = new Thread(this);
 		this.sum_weights = weights;
@@ -51,7 +51,7 @@ public class Weighting implements Runnable {
 		BufferedWriter bwTemp = null;
 		try {
 			//prépare la lecture de l'index dont le chemin est en paramètre
-			fr = new FileReader(fIndex);
+			fr=new FileReader(new File(index));
 			br = new BufferedReader(fr);
 			//prépare la réécriture de l'index
 			fwTemp = new FileWriter(fTmpIndex);

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 //Classe qui contient des méthodes communes pour les différents package
@@ -103,7 +104,7 @@ public class Common {
 	/**
 	 *  Fonction qui renvoit la liste des fichiers contenus dans un répertoire en fonction de son extension
 	 */
-	public static void getDirectory(File f, HashMap<Integer,String[]> listFiles, final String ext, int max_entries) 
+	public static void getDirectory(File f, TreeMap<Integer,String[]> listFiles, final String ext, int max_entries) 
 			throws IOException {
 		
 		if (max_entries != -1 && listFiles.size() >= max_entries)
@@ -140,18 +141,23 @@ public class Common {
 	 * permet de sauvegarder le dictionnaire inversée, permettant de retrouver
 	 * un fichier à partir de son identifiant numérique.
 	 */
-	public static void writeDirectory(HashMap<Integer,String[]> listFiles){
+	public static void writeDirectory(TreeMap<Integer, String[]> h, int nb_th,int nb_doc){
+		int modulo=nb_doc/nb_th;
 		try {
-			FileWriter fw = new FileWriter(new File(DIRRSC+"corpus.txt"));
-			BufferedWriter bw = new BufferedWriter(fw);
-			for (Map.Entry<Integer, String[]> doc : listFiles.entrySet()){
-				String line = doc.getKey() + "\t" + doc.getValue()[0] + "\t" + doc.getValue()[1];
-				bw.write(line);
-				bw.newLine();
+				for(int j=0;j<nb_th;j++){
+					FileWriter fw = new FileWriter(new File(DIRRSC+j+".corpus"));
+					BufferedWriter bw = new BufferedWriter(fw);
+					while(h.size()>0 && h.firstKey()/modulo==j){
+							bw.write(h.firstKey()+"\t"+h.get(h.firstKey())[0]+"\t"+h.get(h.firstKey())[1]);
+							bw.newLine();
+							h.remove(h.firstKey());
+					}
+					bw.close();
+					fw.close();
+				}
+			
 			}
-			bw.close();
-			fw.close();
-		} catch (IOException e) {
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -160,8 +166,8 @@ public class Common {
 	/*
 	 * permet de récupérer à partir de corpus.txt la liste des fichiers du corpus
 	 */
-	public static HashMap<Integer,String[]> readDirectory(){
-		HashMap<Integer,String[]> listFiles = new HashMap<>();
+	public static TreeMap<Integer, String[]> readDirectory(){
+		TreeMap<Integer,String[]> listFiles = new TreeMap<>();
 		try {
 			FileReader fr = new FileReader(new File(DIRRSC+"corpus.txt"));
 			BufferedReader br = new BufferedReader(fr);

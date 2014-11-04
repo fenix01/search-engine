@@ -20,10 +20,8 @@ import tools.Normalizer;
 
 public class TaskIndexing implements Runnable {
 
-	private int start_doc = 0;
-	private int end_doc = 0;
-	private HashMap<Integer, String[]> corpus;
-
+	// private TreeMap<Integer, String[]> corpus;
+	private String corpus;
 	// on stocke l'index sous la forme d'un treemap de
 	// String = mot en clé, et un TreeMap<DocID,tf> en valeur
 	// pour la recherche on a besoin de trier les documents
@@ -73,7 +71,7 @@ public class TaskIndexing implements Runnable {
 	 * 
 	 * @param x
 	 */
-	
+
 	public static void splitIndex(int x) {
 		FileReader fr;
 		FileWriter fw;
@@ -94,13 +92,13 @@ public class TaskIndexing implements Runnable {
 			BufferedWriter bw = new BufferedWriter(fw);
 			while (line2 != null) {
 				if (firstOccLine1.equals(firstOccLine2)) {
-					if (Integer.parseInt(line1.split("\t")[1])>1) {
+					if (Integer.parseInt(line1.split("\t")[1]) > 1) {
 						bw.write(line1);
 						bw.newLine();
 					}
 				} else {
 
-					if (Integer.parseInt(line1.split("\t")[1])>1) {
+					if (Integer.parseInt(line1.split("\t")[1]) > 1) {
 						bw.write(line1);
 						bw.newLine();
 						bw.close();
@@ -136,49 +134,69 @@ public class TaskIndexing implements Runnable {
 	public void run() {
 		long startTime = System.currentTimeMillis();
 		int compteur = 0;
-		for (int i = this.start_doc; i < this.end_doc; i++) {
-			try {
-				// System.out.println(i);
-				HashMap<String, Integer> tf_doc;
+		FileReader fr;
 
-				String doc;
-				doc = corpus.get(i)[0];
+		try {
+			fr = new FileReader(new File(Common.DIRRSC + corpus));
+			BufferedReader br = new BufferedReader(fr);
+			String line = br.readLine();
 
-				tf_doc = TD2.getTermFrequencies(doc, normalizer, stopwords);
-				for (Map.Entry<String, Integer> word : tf_doc.entrySet()) {
+			while (line != null) {
+				try {
+					// System.out.println(i);
+					HashMap<String, Integer> tf_doc;
 
-					if (!Common.isEmptyWord(word.getKey())) {
-						TreeMap<Integer, Integer> listDocs = index.get(word
-								.getKey());
-						if (listDocs != null) {
-							// le mot existe dans l'index, on l'ajoute dans la
-							// liste des documents
-							listDocs.put(i, word.getValue());
-							index.put(word.getKey(), listDocs);
-						} else {
-							TreeMap<Integer, Integer> list_docs = new TreeMap<>();
-							list_docs.put(i, word.getValue());
-							index.put(word.getKey(), list_docs);
+					String[] doc = line.split("\t");
+					int hash_doc = Integer.parseInt((doc[0]));
+					tf_doc = TD2.getTermFrequencies(doc[1], normalizer,
+							stopwords);
+					for (Map.Entry<String, Integer> word : tf_doc.entrySet()) {
+
+						if (!Common.isEmptyWord(word.getKey())) {
+							TreeMap<Integer, Integer> listDocs = index.get(word
+									.getKey());
+							if (listDocs != null) {
+								// le mot existe dans l'index, on l'ajoute dans
+								// la
+								// liste des documents
+								listDocs.put(hash_doc, word.getValue());
+								index.put(word.getKey(), listDocs);
+							} else {
+								TreeMap<Integer, Integer> list_docs = new TreeMap<>();
+								list_docs.put(hash_doc, word.getValue());
+								index.put(word.getKey(), list_docs);
+							}
 						}
 					}
-				}
 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				// if(Utils.getUsedMemory()>=1000000000){
+				// System.out.println(i);
+				// System.out.println(Utils.memoryInfo());
+				// saveTempIndex();
+				// }
+				if (compteur == this.reached) {
+					System.out.println(Utils.memoryInfo());
+					compteur = 0;
+					saveTempIndex();
+				}
+				line=br.readLine();
+				compteur++;
 			}
-			// if(Utils.getUsedMemory()>=1000000000){
-			// System.out.println(i);
-			// System.out.println(Utils.memoryInfo());
-			// saveTempIndex();
-			// }
-			if (compteur == this.reached) {
-				System.out.println(Utils.memoryInfo());
-				compteur = 0;
-				saveTempIndex();
-			}
-			compteur++;
+			br.close();
+			fr.close();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 		saveTempIndex();
 		fusionIndexes(this.tmp_idx, this.name_idx);
 		long estimatedTime = System.currentTimeMillis() - startTime;
@@ -264,15 +282,12 @@ public class TaskIndexing implements Runnable {
 		}
 	}
 
-	public TaskIndexing(HashMap<Integer, String[]> h, int start_doc,
-			int end_doc, Normalizer n, boolean stopwords, String name_idx,
-			int reached) {
+	public TaskIndexing(String fic_corpus, Normalizer n, boolean stopwords,
+			String name_idx, int reached) {
 		this.index = new TreeMap<>();
-		this.start_doc = start_doc;
-		this.end_doc = end_doc;
 		this.normalizer = n;
 		this.stopwords = stopwords;
-		this.corpus = h;
+		this.corpus = fic_corpus;
 		this.tmp_idx = new LinkedList<>();
 		this.name_idx = name_idx;
 		this.th = new Thread(this);
