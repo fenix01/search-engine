@@ -72,6 +72,24 @@ public class Common {
 		}
 		emptyWords = stop;
 	}
+	
+	/**
+	 * retourne les premières lettres d'un mot de la ligne d'index vérifie si
+	 * certains mots ont une taille inférieur à x
+	 * 
+	 * @param line
+	 * @param x
+	 * @return
+	 */
+	public static String firstOcc(String line, int x) {
+		if (line == null)
+			return null;
+		String word = line.split("\t")[0];
+		if (word.length() < x)
+			return word;
+		else
+			return word.substring(0, x);
+	}
 
 	// Fonction qui permet de renvoyer un Map trié par les valeurs
 	public static SortedSet<Entry<String, Double>> sortMap(Map mp) {
@@ -202,9 +220,11 @@ public class Common {
 		boolean found = false;
 		while (!found && line != null){
 			line = br.readLine();
-			String word_ = line.split("\t")[0];
-			if (word_.equals(word)){
-				found = true;
+			if (line != null){
+				String word_ = line.split("\t")[0];
+				if (word_.equals(word)){
+					found = true;
+				}
 			}
 		}
 		br.close();

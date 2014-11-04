@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import search.Request;
 import tools.FrenchStemmer;
 import tools.FrenchTokenizer;
 import tools.Normalizer;
@@ -44,6 +46,7 @@ public class Main {
 			System.out.println("Indexer le corpus : tapez 3");
 			System.out.println("Parcours les indexes pour inclure le poids,"+
 			"et générer le fichier somme des poids : tapez 4");
+			System.out.println("Effectuer une recherche : tapez 6");
 			System.out.println("Supprimer les indexes, le fichier poids, et le fichier corpus : tapez 8");
 			System.out.println("quitter : tapez 9");
 			command = sc.nextInt();
@@ -124,6 +127,14 @@ public class Main {
 				weight_2.join();
 				Weighting.saveWeights(Common.DIRINDEX + "docWeight"+Common.extWEIGHT, sum_weights);
 				break;
+			case 5:
+				System.out.println("commande 4: indexation avec stemming, commande 5 indexation tokenizer");
+			case 6:
+				System.out.println("entrer votre requête");
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				String req = br.readLine();
+				Request request = new Request(req, new FrenchStemmer());
+				request.search();
 			case 8:
 				//permet de supprimer les anciens indexes, et de créer le répertoire
 				File index_dir = new File(Common.DIRINDEX);

@@ -49,24 +49,6 @@ public class TaskIndexing implements Runnable {
 	}
 
 	/**
-	 * retourne les premières lettres d'un mot de la ligne d'index vérifie si
-	 * certains mots ont une taille inférieur à x
-	 * 
-	 * @param line
-	 * @param x
-	 * @return
-	 */
-	private static String firstOcc(String line, int x) {
-		if (line == null)
-			return null;
-		String word = line.split("\t")[0];
-		if (word.length() < x)
-			return word;
-		else
-			return word.substring(0, x);
-	}
-
-	/**
 	 * permet de découper l'index selon les X premières lettres des mots
 	 * 
 	 * @param x
@@ -85,8 +67,8 @@ public class TaskIndexing implements Runnable {
 
 			String firstOccLine1;
 			String firstOccLine2;
-			firstOccLine1 = firstOcc(line1, x);
-			firstOccLine2 = firstOcc(line2, x);
+			firstOccLine1 = Common.firstOcc(line1, x);
+			firstOccLine2 = Common.firstOcc(line2, x);
 			fw = new FileWriter(
 					Common.DIRINDEX + firstOccLine1 + Common.extIDX, true);
 			BufferedWriter bw = new BufferedWriter(fw);
@@ -112,8 +94,8 @@ public class TaskIndexing implements Runnable {
 				line1 = line2;
 				line2 = br.readLine();
 
-				firstOccLine1 = firstOcc(line1, x);
-				firstOccLine2 = firstOcc(line2, x);
+				firstOccLine1 = Common.firstOcc(line1, x);
+				firstOccLine2 = Common.firstOcc(line2, x);
 			}
 			bw.write(line1);
 			bw.newLine();
