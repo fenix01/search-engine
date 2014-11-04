@@ -43,7 +43,7 @@ public class Weighting implements Runnable {
 	public void updateSumWeights(String index){
 		File fIndex = new File(index);
 		
-		String tmpIDX = index.substring(0, index.lastIndexOf(".idx"))+0+Common.extIDX;
+		String tmpIDX = index.substring(0, index.lastIndexOf(".idx"))+0+Common.extTMP;
 		File fTmpIndex = new File(tmpIDX);
 		FileReader fr = null;
 		BufferedReader br = null;

@@ -7,15 +7,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import common.Common;
 import common.Utils;
-import td.td2.TD2;
-import td.td3.TD3;
 import tools.Normalizer;
 
 public class TaskIndexing implements Runnable {
@@ -148,7 +148,7 @@ public class TaskIndexing implements Runnable {
 
 					String[] doc = line.split("\t");
 					int hash_doc = Integer.parseInt((doc[0]));
-					tf_doc = TD2.getTermFrequencies(doc[1], normalizer,
+					tf_doc = getTermFrequencies(doc[1], normalizer,
 							stopwords);
 					for (Map.Entry<String, Integer> word : tf_doc.entrySet()) {
 
@@ -208,7 +208,7 @@ public class TaskIndexing implements Runnable {
 			String out_idx = Common.DIRINDEX + this.name_idx + this.cur_index
 					+ Common.extIDX;
 			this.tmp_idx.add(out_idx);
-			TD3.saveInvertedFile(index, new File(out_idx));
+			saveInvertedFile(index, new File(out_idx));
 			this.index.clear();
 			this.cur_index++;
 			System.gc();
@@ -216,6 +216,64 @@ public class TaskIndexing implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static void saveInvertedFile(
+			TreeMap<String, TreeMap<Integer,Integer>> invertedFile, File outFile)
+			throws IOException {
+		FileWriter fw = new FileWriter(outFile);
+		for (Entry<String, TreeMap<Integer, Integer>> word : invertedFile.entrySet()) {
+			String word_ = word.getKey();
+			TreeMap<Integer,Integer> fileList = word.getValue();
+			String line = word_ + "\t" + fileList.size()+"\t";
+			String files = "";
+			int i = 0;
+			for (Map.Entry<Integer, Integer> doc : fileList.entrySet()) {
+				files += (i==0)?doc.getKey()+":"+doc.getValue():","+doc.getKey()+":"+doc.getValue();
+				i++;
+			}
+			line += files + "\n";
+			fw.write(line);
+		}
+		fw.close();
+	}
+	
+	/**
+	 * Une méthode renvoyant le nombre d'occurrences
+	 * de chaque mot dans un fichier.
+	 * @param fileName le fichier à analyser
+	 * @param normalizer la classe de normalisation utilisée
+	 * @param removeStopWords
+	 * @throws IOException
+	 */
+	private static HashMap<String, Integer> getTermFrequencies(String fileName, Normalizer normalizer, boolean removeStopWords) throws IOException {
+		// Création de la table des mots
+		HashMap<String, Integer> hits = new HashMap<String, Integer>();
+		
+		// Appel de la méthode de normalisation
+		ArrayList<String> words = normalizer.normalize(new File(fileName), removeStopWords);
+		Integer number;
+		// Pour chaque mot de la liste, on remplit un dictionnaire
+		// du nombre d'occurrences pour ce mot
+		for (String word : words) {
+			word = word.toLowerCase();
+			// on récupère le nombre d'occurrences pour ce mot
+			number = hits.get(word);
+			// Si ce mot n'était pas encore présent dans le dictionnaire,
+			// on l'ajoute (nombre d'occurrences = 1)
+			if (number == null) {
+				hits.put(word, 1);
+			}
+			// Sinon, on incrémente le nombre d'occurrence
+			else {
+				hits.put(word, ++number);
+			}
+		}
+		return hits;
+//		// Affichage du résultat
+//		for (Map.Entry<String, Integer> hit : hits.entrySet()) {
+//			System.out.println(hit.getKey() + "\t" + hit.getValue());
+//		}
 	}
 
 	/**

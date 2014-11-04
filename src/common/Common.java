@@ -22,6 +22,8 @@ import java.util.TreeSet;
 
 public class Common {
 	
+	//extension d'un fichier temporaire
+	public static String extTMP = ".tmp";
 	//extension de l'index
 	public static String extIDX = ".idx";
 	//extension du fichier poids
@@ -29,11 +31,9 @@ public class Common {
 
 	public static String DIRRSC = "./rsc/";
 	public static String DIRINDEX = DIRRSC + "index/";
-	//public static String DIRCORPUS = DIRRSC + "corpus/";
-	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
+	public static String DIRCORPUS = DIRRSC + "corpus/";
+	//public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 
-	public static String DIRWEIGTH_STEMMER = DIRRSC + "weight/" + "stemmer/";
-	public static String DIRWEIGTH_TOKENIZER = DIRRSC + "weight/" + "tokenizer/";
 	public static ArrayList<String> emptyWords;
 	
 	private static void unloadEmptyWords(){
