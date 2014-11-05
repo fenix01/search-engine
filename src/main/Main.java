@@ -94,7 +94,7 @@ public class Main {
 				TaskIndexing index[]=new TaskIndexing[nb_thread];
 				
 				for(int i=0;i<nb_thread;i++){
-					index[i]=new TaskIndexing(i+".corpus", tokenizer[i], true,
+					index[i]=new TaskIndexing(i+".corpus", stemmer[i], true,
 							"index"+i, 10000/nb_thread);
 				}
 				
@@ -135,6 +135,7 @@ public class Main {
 				String req = br.readLine();
 				Request request = new Request(req, new FrenchStemmer());
 				request.search();
+				break;
 			case 8:
 				//permet de supprimer les anciens indexes, et de créer le répertoire
 				File index_dir = new File(Common.DIRINDEX);

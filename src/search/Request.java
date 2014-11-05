@@ -24,14 +24,18 @@ public class Request {
 		//contient pour chaque mot sa liste de documents
 		LinkedList<ArrayList<Couple>> ltRequest = new LinkedList<>(); 
 		for (String word : request){
-			ArrayList<Couple> ltDocs;
-			ltDocs = extractWordFromIndex(word);
-			if (ltDocs != null)
-				ltRequest.add(ltDocs);
+			if(!Common.isEmptyWord(word)){
+				ArrayList<Couple> ltDocs;
+				ltDocs = extractWordFromIndex(word);
+				if (ltDocs != null)
+					ltRequest.add(ltDocs);
+			}
 		}
 		
 		//il faut à présent calculer la similarité entre la requête et la liste des docs extraits
 		ArrayList<Couple> ltFusion = fusion(ltRequest);
+		for(int i=0;i<ltFusion.size();i++)
+			System.out.println(ltFusion.get(i).getDocID());
 		
 	}
 	
@@ -58,8 +62,7 @@ public class Request {
 			ltDocs = new ArrayList<Couple>(docs.length);
 			for (String doc : docs){
 				String[] docEl = doc.split(":");
-				Couple cp = new Couple(Integer.parseInt(docEl[0]));
-				cp.addWord(word , Double.parseDouble(docEl[2]));
+				Couple cp = new Couple(Integer.parseInt(docEl[0]), Double.parseDouble(docEl[1]));
 				ltDocs.add(cp);
 				
 			}
