@@ -62,7 +62,8 @@ public class Request {
 			ltDocs = new ArrayList<Couple>(docs.length);
 			for (String doc : docs){
 				String[] docEl = doc.split(":");
-				Couple cp = new Couple(Integer.parseInt(docEl[0]), Double.parseDouble(docEl[1]));
+				Couple cp = new Couple(Integer.parseInt(docEl[0]));
+				cp.addWord(word , Double.parseDouble(docEl[1]));
 				ltDocs.add(cp);
 				
 			}
