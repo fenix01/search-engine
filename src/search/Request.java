@@ -57,7 +57,7 @@ public class Request {
 		}
 		if (!line.equals("")){
 			String[] lineIndex = line.split("\t");
-			String[] docs = lineIndex[2].split(","); 
+			String[] docs = lineIndex[1].split(","); 
 			
 			ltDocs = new ArrayList<Couple>(docs.length);
 			for (String doc : docs){
@@ -67,6 +67,8 @@ public class Request {
 				ltDocs.add(cp);
 				
 			}
+			
+			
 		}
 		return ltDocs;
 	}
@@ -86,6 +88,7 @@ public class Request {
 			//on dépile deux listes de documents
 			ArrayList<Couple> ltDoc1 = ltRequest.pollFirst();
 			ArrayList<Couple> ltDoc2 = ltRequest.pollFirst();
+			ArrayList<Couple> ltDoc3 = new ArrayList<>();
 			//on applique l'algo de fusion
 			while (l1 != ltDoc1.size() && l2 != ltDoc2.size()){
 				//on dépile deux documents
@@ -93,7 +96,7 @@ public class Request {
 				Couple c2 = ltDoc2.get(l2);
 				//on compare si leurs ids est pareil
 				if (c1.getDocID() == c2.getDocID()){
-					ltDocs.add(c1);
+					ltDoc3.add(c1);
 					c1.fusion(c2);
 					l1++;
 					l2++;
@@ -102,8 +105,9 @@ public class Request {
 					l1++;
 				else l2++;
 			}
+			ltRequest.add(ltDoc3);
 		}
-		return ltDocs;
+		return ltRequest.pollFirst();
 		
 	}
 

@@ -113,7 +113,7 @@ public class Main {
 			case 4:
 				File fIndexes = new File(Common.DIRINDEX);
 				TreeMap<Integer, String[]> indexes = new TreeMap<>();
-				TreeMap<Integer, Double> sum_weights = new TreeMap<>();
+				TreeMap<Integer, Float> sum_weights = new TreeMap<>();
 				Common.getDirectory(fIndexes, indexes, ".idx", -1);
 				Weighting weight_1 = new Weighting(sum_weights, indexes, 0,
 						indexes.size() / 2, nb_doc);

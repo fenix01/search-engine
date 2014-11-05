@@ -15,14 +15,14 @@ import common.Common;
 public class Weighting implements Runnable {
 
 	private Thread th;
-	private TreeMap<Integer,Double> sum_weights;
+	private TreeMap<Integer,Float> sum_weights;
 	private TreeMap<Integer, String[]> index;
 	private int start_doc = 0;
 	private int end_doc = 0;
 	private int sizeCorpus = 0;
 	
 	
-	public Weighting(TreeMap<Integer,Double> weights, TreeMap<Integer, String[]> index,
+	public Weighting(TreeMap<Integer,Float> weights, TreeMap<Integer, String[]> index,
 			int start_doc, int end_doc, int sizeCorpus){
 		this.th = new Thread(this);
 		this.sum_weights = weights;
@@ -79,16 +79,16 @@ public class Weighting implements Runnable {
 					
 					synchronized (sum_weights) {
 						//On calcule le df_t
-						double df_t = sizeCorpus / Double.parseDouble(lineIndex[1]);
+						float df_t = sizeCorpus / Float.parseFloat(lineIndex[1]);
 						//on calcule le poids pour le mot associé au document courant
-						double weight = Double.parseDouble(docTf_[1]) * Math.log10(df_t);
+						float weight = (float) (Float.parseFloat(docTf_[1]) * Math.log10(df_t));
 						
 						if (i < docs.length-1)
 							stbDocsWeight.append(docTf_[0]+":"+weight+",");
 						else
 							stbDocsWeight.append(docTf_[0]+":"+weight);
 						
-						Double docWeight = sum_weights.get(docId);
+						Float docWeight = sum_weights.get(docId);
 						if (docWeight == null){
 							sum_weights.put(docId, weight*weight);
 						}
@@ -146,12 +146,12 @@ public class Weighting implements Runnable {
 		}
 	}
 	
-	public static void saveWeights(String file,TreeMap<Integer,Double> sum_weights) throws IOException{
+	public static void saveWeights(String file,TreeMap<Integer,Float> sum_weights) throws IOException{
 		File f = new File(file);
 		FileWriter fw = new FileWriter(f);
 		BufferedWriter bw = new BufferedWriter(fw);
-		for(Map.Entry<Integer, Double> weight_doc : sum_weights.entrySet()){
-			bw.write(weight_doc.getKey()+"\t"+Math.sqrt(weight_doc.getValue()));
+		for(Map.Entry<Integer, Float> weight_doc : sum_weights.entrySet()){
+			bw.write(weight_doc.getKey()+"\t"+(float)(Math.sqrt(weight_doc.getValue())));
 			bw.newLine();
 		}
 		bw.close();
