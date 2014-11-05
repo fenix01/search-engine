@@ -58,7 +58,8 @@ public class Request {
 			ltDocs = new ArrayList<Couple>(docs.length);
 			for (String doc : docs){
 				String[] docEl = doc.split(":");
-				Couple cp = new Couple(Integer.parseInt(docEl[0]), Double.parseDouble(docEl[2]));
+				Couple cp = new Couple(Integer.parseInt(docEl[0]));
+				cp.addWord(word , Double.parseDouble(docEl[2]));
 				ltDocs.add(cp);
 				
 			}
@@ -89,6 +90,7 @@ public class Request {
 				//on compare si leurs ids est pareil
 				if (c1.getDocID() == c2.getDocID()){
 					ltDocs.add(c1);
+					c1.fusion(c2);
 					l1++;
 					l2++;
 				}
