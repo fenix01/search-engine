@@ -24,14 +24,18 @@ public class Request {
 		//contient pour chaque mot sa liste de documents
 		LinkedList<ArrayList<Couple>> ltRequest = new LinkedList<>(); 
 		for (String word : request){
-			ArrayList<Couple> ltDocs;
-			ltDocs = extractWordFromIndex(word);
-			if (ltDocs != null)
-				ltRequest.add(ltDocs);
+			if(!Common.isEmptyWord(word)){
+				ArrayList<Couple> ltDocs;
+				ltDocs = extractWordFromIndex(word);
+				if (ltDocs != null)
+					ltRequest.add(ltDocs);
+			}
 		}
 		
 		//il faut à présent calculer la similarité entre la requête et la liste des docs extraits
 		ArrayList<Couple> ltFusion = fusion(ltRequest);
+		for(int i=0;i<ltFusion.size();i++)
+			System.out.println(ltFusion.get(i).getDocID());
 		
 	}
 	
@@ -53,12 +57,12 @@ public class Request {
 		}
 		if (!line.equals("")){
 			String[] lineIndex = line.split("\t");
-			String[] docs = lineIndex[2].split(","); 
+			String[] docs = lineIndex[1].split(","); 
 			
 			ltDocs = new ArrayList<Couple>(docs.length);
 			for (String doc : docs){
 				String[] docEl = doc.split(":");
-				Couple cp = new Couple(Integer.parseInt(docEl[0]), Double.parseDouble(docEl[2]));
+				Couple cp = new Couple(Integer.parseInt(docEl[0]), Double.parseDouble(docEl[1]));
 				ltDocs.add(cp);
 				
 			}
@@ -76,11 +80,16 @@ public class Request {
 		//liste finale de documents
 		ArrayList<Couple> ltDocs = new ArrayList<>();
 		// tant qu'il reste au moins 2 listes de documents à parcourir
+		if(ltRequest.size()==1){
+			ltDocs.addAll(ltRequest.pollFirst());
+			return  ltDocs;
+		}
 		while (ltRequest.size() > 1) {
 			int l1 = 0,l2 = 0;
 			//on dépile deux listes de documents
 			ArrayList<Couple> ltDoc1 = ltRequest.pollFirst();
 			ArrayList<Couple> ltDoc2 = ltRequest.pollFirst();
+			ArrayList<Couple> ltDocfus = new ArrayList<>();
 			//on applique l'algo de fusion
 			while (l1 != ltDoc1.size() && l2 != ltDoc2.size()){
 				//on dépile deux documents
@@ -88,16 +97,19 @@ public class Request {
 				Couple c2 = ltDoc2.get(l2);
 				//on compare si leurs ids est pareil
 				if (c1.getDocID() == c2.getDocID()){
-					ltDocs.add(c1);
+					ltDocfus.add(c1);
 					l1++;
 					l2++;
 				}
 				else if (c1.getDocID() < c2.getDocID())
 					l1++;
 				else l2++;
+				
 			}
+			ltRequest.push(ltDocfus);
+			
 		}
-		return ltDocs;
+		return ltRequest.pollFirst();
 		
 	}
 

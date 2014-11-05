@@ -122,7 +122,6 @@ public class TaskIndexing implements Runnable {
 			fr = new FileReader(new File(Common.DIRRSC + corpus));
 			BufferedReader br = new BufferedReader(fr);
 			String line = br.readLine();
-
 			while (line != null) {
 				try {
 					// System.out.println(i);

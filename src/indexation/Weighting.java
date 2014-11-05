@@ -68,7 +68,7 @@ public class Weighting implements Runnable {
 				//on prépare la construction de la nouvelle ligne
 				StringBuilder stbDocsWeight = new StringBuilder();
 				//contient pour l'instant le mot et le df
-				stbDocsWeight.append(lineIndex[0] + "\t" + lineIndex[1] + "\t");
+				stbDocsWeight.append(lineIndex[0] + "\t" );
 				
 				//on parcourt la liste des docs
 				for (int i = 0 ; i < docs.length ; i++){
@@ -84,9 +84,9 @@ public class Weighting implements Runnable {
 						double weight = Double.parseDouble(docTf_[1]) * Math.log10(df_t);
 						
 						if (i < docs.length-1)
-							stbDocsWeight.append(docs[i]+":"+weight+",");
+							stbDocsWeight.append(docTf_[0]+":"+weight+",");
 						else
-							stbDocsWeight.append(docs[i]+":"+weight);
+							stbDocsWeight.append(docTf_[0]+":"+weight);
 						
 						Double docWeight = sum_weights.get(docId);
 						if (docWeight == null){
