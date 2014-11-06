@@ -10,13 +10,13 @@ import java.util.HashMap;
 public class Couple {
 	
 	private int docID;
-	private HashMap<String,Double> weight;
+	private HashMap<String,Float> weight;
 	
 	public int getDocID() {
 		return docID;
 	}
 
-	public HashMap<String,Double> getWeight() {
+	public HashMap<String,Float> getWeight() {
 		return weight;
 	}
 
@@ -25,7 +25,7 @@ public class Couple {
 		this.weight = new HashMap<>();
 	}
 	
-	public void addWord(String word, double weight_){
+	public void addWord(String word, float weight_){
 		this.weight.put(word, weight_);
 	}
 	

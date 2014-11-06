@@ -24,6 +24,8 @@ import tools.Normalizer;
 import common.Common;
 
 public class Main {
+	
+	public static int nb_doc = 0;
 
 	public static void main(String[] args) throws IOException {
 		// liste des fichiers du corpus
@@ -31,7 +33,6 @@ public class Main {
 		File fRevCorpus = new File(Common.DIRRSC + "0.corpus");
 		File fCorpus = new File(Common.DIRCORPUS);
 		int nb_thread=4;
-		int nb_doc=0;
 		//permet de charger les mots vides
 		Common.loadEmptyWords();
 		

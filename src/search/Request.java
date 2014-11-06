@@ -3,18 +3,25 @@ package search;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
+import main.Main;
 import common.Common;
 import tools.Normalizer;
 
 public class Request {
 	
 	private ArrayList<String> request;
+	private float sum_weigth;
+	private HashMap<String,Float> weigths;
 	
 	public Request(String req, Normalizer norm){
 		//permet de normaliser la requête
 		this.request = norm.normalize(req);
+		this.weigths = new HashMap<>();
 	}
 	
 	/**
@@ -26,16 +33,41 @@ public class Request {
 		for (String word : request){
 			if(!Common.isEmptyWord(word)){
 				ArrayList<Couple> ltDocs;
+				//extrait pour chaque mot sa liste de docs avec les poids
 				ltDocs = extractWordFromIndex(word);
+				//calcul le poids des mots de la requête
+				float weight =  (float) Math.log10(Main.nb_doc / ltDocs.size());
+				weigths.put(word, weight);
+				sum_weigth += weight * weight;
+				
 				if (ltDocs != null)
 					ltRequest.add(ltDocs);
 			}
 		}
 		
+		//calcul la racine de la somme des poids de la requête
+		sum_weigth = (float) Math.sqrt(sum_weigth);
+		
+		
 		//il faut à présent calculer la similarité entre la requête et la liste des docs extraits
 		ArrayList<Couple> ltFusion = fusion(ltRequest);
 		for(int i=0;i<ltFusion.size();i++)
 			System.out.println(ltFusion.get(i).getDocID());
+		
+		
+	}
+	
+	private void similarity(ArrayList<Couple> ltFusion){
+		float sim = 0;
+		LinkedHashMap<Integer,Float> similarities = new LinkedHashMap<>();
+		for (Couple cpDoc : ltFusion){
+			for (Map.Entry<String, Float> wordDoc : cpDoc.getWeight().entrySet()){
+				float req_weight = weigths.get(wordDoc.getKey());
+				sim+= req_weight * wordDoc.getValue();
+				
+			}
+			similarities.put(cpDoc.getDocID(), sim);
+		}
 		
 	}
 	
@@ -63,7 +95,7 @@ public class Request {
 			for (String doc : docs){
 				String[] docEl = doc.split(":");
 				Couple cp = new Couple(Integer.parseInt(docEl[0]));
-				cp.addWord(word , Double.parseDouble(docEl[1]));
+				cp.addWord(word , Float.parseFloat(docEl[1]));
 				ltDocs.add(cp);
 				
 			}
