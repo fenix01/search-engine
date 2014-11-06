@@ -29,7 +29,7 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		// liste des fichiers du corpus
-		TreeMap<Integer, String[]> h = null;
+		TreeMap<Integer, String> h = null;
 		File fRevCorpus = new File(Common.DIRRSC + "0.corpus");
 		File fCorpus = new File(Common.DIRCORPUS);
 		int nb_thread=4;
@@ -113,7 +113,7 @@ public class Main {
 				break;
 			case 4:
 				File fIndexes = new File(Common.DIRINDEX);
-				TreeMap<Integer, String[]> indexes = new TreeMap<>();
+				TreeMap<Integer, String> indexes = new TreeMap<>();
 				TreeMap<Integer, Float> sum_weights = new TreeMap<>();
 				Common.getDirectory(fIndexes, indexes, ".idx", -1);
 				Weighting weight_1 = new Weighting(sum_weights, indexes, 0,
@@ -127,6 +127,7 @@ public class Main {
 				weight_1.join();
 				weight_2.join();
 				Weighting.saveWeights(Common.DIRINDEX + "docWeight"+Common.extWEIGHT, sum_weights);
+				Weighting.saveWeights2();
 				break;
 			case 5:
 				System.out.println("commande 4: indexation avec stemming, commande 5 indexation tokenizer");

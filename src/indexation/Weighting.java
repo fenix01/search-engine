@@ -16,13 +16,13 @@ public class Weighting implements Runnable {
 
 	private Thread th;
 	private TreeMap<Integer,Float> sum_weights;
-	private TreeMap<Integer, String[]> index;
+	private TreeMap<Integer, String> index;
 	private int start_doc = 0;
 	private int end_doc = 0;
 	private int sizeCorpus = 0;
 	
 	
-	public Weighting(TreeMap<Integer,Float> weights, TreeMap<Integer, String[]> index,
+	public Weighting(TreeMap<Integer,Float> weights, TreeMap<Integer, String> index,
 			int start_doc, int end_doc, int sizeCorpus){
 		this.th = new Thread(this);
 		this.sum_weights = weights;
@@ -124,7 +124,7 @@ public class Weighting implements Runnable {
 
 			String doc;
 			synchronized (index) {
-				doc = index.get(i)[0];
+				doc = index.get(i);
 				
 			}
 			System.out.println(doc);
@@ -151,10 +151,37 @@ public class Weighting implements Runnable {
 		FileWriter fw = new FileWriter(f);
 		BufferedWriter bw = new BufferedWriter(fw);
 		for(Map.Entry<Integer, Float> weight_doc : sum_weights.entrySet()){
-			bw.write(weight_doc.getKey()+"\t"+(float)(Math.sqrt(weight_doc.getValue())));
+			bw.write(String.valueOf((float)(Math.sqrt(weight_doc.getValue()))));
 			bw.newLine();
 		}
 		bw.close();
+	}
+	
+	public static void saveWeights2() throws IOException{
+		File f1 = new File(Common.DIRINDEX + "docWeight"+Common.extWEIGHT);
+		File f2 = new File(Common.DIRRSC+"all.corpus");
+		FileReader fr1 = new FileReader(f1);
+		FileReader fr2 = new FileReader(f2);
+		BufferedReader br1 = new BufferedReader(fr1);
+		BufferedReader br2 = new BufferedReader(fr2);
+		
+		File fres = new File(Common.DIRINDEX+"weight"+Common.extWEIGHT);
+		FileWriter fwres = new FileWriter(fres);
+		BufferedWriter bw = new BufferedWriter(fwres);
+		
+		String line1,line2;
+		int cpt=0;
+		while ((line1 = br1.readLine()) != null){
+			line2=br2.readLine();
+			bw.write(cpt+"\t"+line1+"\t"+line2);
+			bw.newLine();
+			cpt++;
+		}
+		br1.close();
+		br2.close();
+		bw.close();
+		f1.delete();
+		f2.delete();
 	}
 	
 }

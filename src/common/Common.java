@@ -92,12 +92,12 @@ public class Common {
 	}
 
 	// Fonction qui permet de renvoyer un Map trié par les valeurs
-	public static SortedSet<Entry<String, Double>> sortMap(Map mp) {
-		TreeSet sortedMap = new TreeSet<Map.Entry<String, Double>>(
-				new Comparator<Map.Entry<String, Double>>() {
+	public static SortedSet<Entry<String, Float>> sortMap(Map mp) {
+		TreeSet sortedMap = new TreeSet<Map.Entry<String, Float>>(
+				new Comparator<Map.Entry<String, Float>>() {
 					@Override
-					public int compare(Map.Entry<String, Double> e1,
-							Map.Entry<String, Double> e2) {
+					public int compare(Map.Entry<String, Float> e1,
+							Map.Entry<String, Float> e2) {
 						int comp = Double.compare(e1.getValue(), e2.getValue());
 						if (comp == 0)
 							return 0;
@@ -122,7 +122,7 @@ public class Common {
 	/**
 	 *  Fonction qui renvoit la liste des fichiers contenus dans un répertoire en fonction de son extension
 	 */
-	public static void getDirectory(File f, TreeMap<Integer,String[]> listFiles, final String ext, int max_entries) 
+	public static void getDirectory(File f, TreeMap<Integer,String> listFiles, final String ext, int max_entries) 
 			throws IOException {
 		
 		if (max_entries != -1 && listFiles.size() >= max_entries)
@@ -146,10 +146,7 @@ public class Common {
 			if(file_.isDirectory())
 					getDirectory(file_, listFiles,ext,max_entries);
 			else{
-				String[] fileStr = new String[2];
-				fileStr[0] = file_.getCanonicalPath();
-				fileStr[1] = file_.getName();
-				listFiles.put(listFiles.size(),fileStr);
+				listFiles.put(listFiles.size(),file_.getCanonicalPath());
 			}	
 		}
 	}
@@ -159,20 +156,32 @@ public class Common {
 	 * permet de sauvegarder le dictionnaire inversée, permettant de retrouver
 	 * un fichier à partir de son identifiant numérique.
 	 */
-	public static void writeDirectory(TreeMap<Integer, String[]> h, int nb_th,int nb_doc){
+	public static void writeDirectory(TreeMap<Integer, String> h, int nb_th,int nb_doc){
 		int modulo=nb_doc/nb_th;
+		
 		try {
+			FileWriter fwall = new FileWriter(new File(DIRRSC+"all.corpus"));
+			BufferedWriter bwall = new BufferedWriter(fwall);
+			
 				for(int j=0;j<nb_th;j++){
+					
 					FileWriter fw = new FileWriter(new File(DIRRSC+j+".corpus"));
 					BufferedWriter bw = new BufferedWriter(fw);
+					
 					while(h.size()>0 && h.firstKey()/modulo==j){
-							bw.write(h.firstKey()+"\t"+h.get(h.firstKey())[0]+"\t"+h.get(h.firstKey())[1]);
+						
+							bw.write(h.firstKey()+"\t"+h.get(h.firstKey()));
 							bw.newLine();
+							
+							File f = new File(h.get(h.firstKey()));
+							bwall.write(f.getName());
+							bwall.newLine();
 							h.remove(h.firstKey());
 					}
 					bw.close();
 					fw.close();
 				}
+				bwall.close();
 			
 			}
 		catch (IOException e) {
