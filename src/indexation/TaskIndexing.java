@@ -1,9 +1,15 @@
 package indexation;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -49,11 +55,90 @@ public class TaskIndexing implements Runnable {
 	}
 
 	/**
+	 * permet de découper l'index binaire selon les X premières lettres des mots
+	 * 
+	 * @param x
+	 */
+	public static void splitBinaryIndex(int x) {
+		FileInputStream fis;
+		BufferedInputStream bis;
+		DataInputStream dis;
+		try {
+			File fIndex = new File(Common.DIRINDEX + "index" + Common.extIDX);
+			fis = new FileInputStream(fIndex);
+			bis = new BufferedInputStream(fis);
+			dis = new DataInputStream(bis);
+
+			String word1 = dis.readUTF();
+			int df = dis.readInt();
+			byte[] docs = FusionIndex.getBinaryDocs(df, dis);
+			String word2 = dis.readUTF();
+
+			String firstOccLine1;
+			String firstOccLine2;
+			firstOccLine1 = Common.firstOcc(word1, x);
+			firstOccLine2 = Common.firstOcc(word2, x);
+			
+			String occName = Common.DIRINDEX + firstOccLine1 + Common.extIDX;
+			File fOcc = new File(occName);
+			FileOutputStream fos = new FileOutputStream(fOcc);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			DataOutputStream dos = new DataOutputStream(bos);		
+
+			boolean EOF = false;
+			while (!EOF) {
+				if (firstOccLine1.equals(firstOccLine2)) {
+					if (df > 1) {
+						dos.writeUTF(word1);
+						dos.writeInt(df);
+						dos.write(docs);
+					}
+				} else {
+					if (df > 1) {
+						dos.writeUTF(word1);
+						dos.writeInt(df);
+						dos.write(docs);
+						dos.close();
+					}
+					dos.close();
+					if (fOcc.length() == 0) fOcc.delete();
+					occName = Common.DIRINDEX + firstOccLine2 + Common.extIDX;
+					fOcc = new File(occName);
+					fos = new FileOutputStream(fOcc);
+					bos = new BufferedOutputStream(fos);
+					dos = new DataOutputStream(fos);	
+				}
+				word1 = word2;
+				df = dis.readInt();
+				docs = FusionIndex.getBinaryDocs(df, dis);
+				if (dis.available() > 0){
+					word2 = dis.readUTF();
+					firstOccLine1 = Common.firstOcc(word1, x);
+					firstOccLine2 = Common.firstOcc(word2, x);
+				}
+				else EOF = true;	
+			}
+			dos.writeUTF(word1);
+			dos.writeInt(df);
+			dos.write(docs);
+			dos.close();
+			dis.close();
+			fIndex.delete();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}	
+	
+	/**
 	 * permet de découper l'index selon les X premières lettres des mots
 	 * 
 	 * @param x
 	 */
-
 	public static void splitIndex(int x) {
 		FileReader fr;
 		FileWriter fw;
@@ -69,8 +154,10 @@ public class TaskIndexing implements Runnable {
 			String firstOccLine2;
 			firstOccLine1 = Common.firstOcc(line1, x);
 			firstOccLine2 = Common.firstOcc(line2, x);
-			fw = new FileWriter(
-					Common.DIRINDEX + firstOccLine1 + Common.extIDX, true);
+			
+			String occName = Common.DIRINDEX + firstOccLine1 + Common.extIDX;
+			File fOcc = new File(occName);
+			fw = new FileWriter(fOcc, true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			while (line2 != null) {
 				if (firstOccLine1.equals(firstOccLine2)) {
@@ -79,15 +166,16 @@ public class TaskIndexing implements Runnable {
 						bw.newLine();
 					}
 				} else {
-
 					if (Integer.parseInt(line1.split("\t")[1]) > 1) {
 						bw.write(line1);
 						bw.newLine();
 						bw.close();
 					}
 					bw.close();
-					fw = new FileWriter(Common.DIRINDEX + firstOccLine2
-							+ Common.extIDX, true);
+					if (fOcc.length() == 0) fOcc.delete();
+					occName = Common.DIRINDEX + firstOccLine2 + Common.extIDX;
+					fOcc = new File(occName);
+					fw = new FileWriter(fOcc, true);
 					bw = new BufferedWriter(fw);
 				}
 
@@ -186,7 +274,7 @@ public class TaskIndexing implements Runnable {
 			String out_idx = Common.DIRINDEX + this.name_idx + this.cur_index
 					+ Common.extIDX;
 			this.tmp_idx.add(out_idx);
-			saveInvertedFile(index, new File(out_idx));
+			saveInvertedBinaryFile(index, new File(out_idx));
 			this.index.clear();
 			this.cur_index++;
 			System.gc();
@@ -214,6 +302,42 @@ public class TaskIndexing implements Runnable {
 			fw.write(line);
 		}
 		fw.close();
+	}
+	
+	/**
+	 * permet de sauvegarder un index temporaire dans un fichier binaire.
+	 * Les données sont stockées de la façon suivante :
+	 * String+Int(taille)+Int(doc1)+Int(tf1)+Float(poids1)+...+Int(docN)+Int(tfN)+Int(poidsN)
+	 * @param invertedFile l'index en mémoire
+	 * @param outFile un fichier d'index qui va recevoir les données
+	 * @throws IOException
+	 */
+	private static void saveInvertedBinaryFile(
+			TreeMap<String, TreeMap<Integer,Integer>> invertedFile, File outFile)
+			throws IOException {
+		FileOutputStream fos = new FileOutputStream(outFile);
+		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		DataOutputStream dos = new DataOutputStream(bos);
+		//parcours toutes les entrées du TreeMap
+		for (Entry<String, TreeMap<Integer, Integer>> word : invertedFile.entrySet()) {
+			//récupère le mot
+			String word_ = word.getKey();
+			//écrit le mot dans le fichier binaire
+			dos.writeUTF(word_);
+			//récupère la liste des documents
+			TreeMap<Integer,Integer> fileList = word.getValue();
+			
+			//écrit le nombre de documents de la liste
+			dos.writeInt(fileList.size());
+			
+			for (Map.Entry<Integer, Integer> doc : fileList.entrySet()) {
+				//on écrit le docID
+				dos.writeInt(doc.getKey());
+				//on écrit le tf
+				dos.writeShort(doc.getValue());
+			}
+		}
+		dos.close();
 	}
 	
 	/**
@@ -285,7 +409,7 @@ public class TaskIndexing implements Runnable {
 			// on fusionne les deux indexes temporaires
 			File fMerge = new File(outIndexMerge);
 			try {
-				FusionIndex.mergeInvertedFiles(f1, f2, fMerge);
+				FusionIndex.mergeInvertedBinaryFiles(f1, f2, fMerge);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

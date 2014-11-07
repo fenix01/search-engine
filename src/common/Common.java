@@ -1,9 +1,12 @@
 package common;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,10 +34,10 @@ public class Common {
 
 	public static String DIRRSC = "./rsc/";
 	public static String DIRINDEX = DIRRSC + "index/";
-	//public static String DIRCORPUS = DIRRSC + "corpus/";
-	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
+	public static String DIRCORPUS = DIRRSC + "corpus/";
+	//public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 	
-	public static String DIRINDEXCOMMUN="/partage/projet/iri/blondy_barussaud_petiot/";
+	public static String DIRINDEXCOMMUN=DIRRSC + "index/";
 	public static String DIRINDEXCOMMUNSTEMMER=DIRINDEXCOMMUN+"stemmer/";
 	public static String DIRINDEXCOMMUNTOKEN=DIRINDEXCOMMUN+"tokenizer/";
 
@@ -245,58 +248,53 @@ public class Common {
 		else return "";
 	}
 	
-	public static String binarySearch(RandomAccessFile rdFile, String word){
-		try {
-			long start = 0;
-			long end = rdFile.length();
-			String curWord,line,line2 = null;
-			while (start <= end){
-				long mid = start + (end - start) / 2;
-				rdFile.seek(mid);
-				line2 = rdFile.readLine();
-				line = rdFile.readLine();
-				curWord = line.split("\t")[0];
-				if (curWord.compareTo(word) >= 0){
-					end = mid - 1;
-				}
-				else {
-					start = mid + 1;
-				}
-			}
-			rdFile.seek(start);
-			rdFile.readLine();
-			line = rdFile.readLine();
-			if (word.equals(line.split("\t")[0]))
-				return line;
-			else if (word.equals(line2.split("\t")[0]))
-				return line2;
-			else return "";
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/*
-	 * méthode qui renvoie pour un mot donné la ligne d'informations de l'index
-	 */
-	public static String getWordIndex(String word) throws FileNotFoundException{
-		char c = word.charAt(0);
-		File f = new File(DIRINDEX+c+"_index");
-		RandomAccessFile rdFile = new RandomAccessFile(f, "r");
-		return binarySearch(rdFile, word);
+	public static String sequentialBinarySearch(File f, String word) throws IOException{
+		FileInputStream fis = new FileInputStream(f);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		DataInputStream dis = new DataInputStream(bis);
 		
-	}
-	
-	
-	public static void writeRequest(String content) throws IOException{
-		File f = new File(DIRRSC+"request.htm");
-		if (f.exists())
-			f.delete();
-		FileWriter fw = new FileWriter(f);
-		fw.write(content);
-		fw.close();
+		boolean eof = false;
+		boolean found = false;
+		String line = "";
+		StringBuilder stb = new StringBuilder();
+		String word_ = dis.readUTF();
+		while (!eof && !found){
+			if (word_.equals(word)){
+				//on écrit le mot
+				stb.append(word_+"\t");
+				//on lit le df
+				int df = dis.readInt();
+				
+				for (int i = 0; i < df ; i++){
+					int docID = dis.readInt();
+					float weight = dis.readFloat();
+					stb.append(docID);
+					stb.append(":");
+					stb.append(weight);
+					if (i<df-1)
+						stb.append(",");
+				}
+				line = stb.toString();
+				found = true;
+			}
+			else {
+				//fois 8 pour inclure le doc et le poids
+				int size = dis.readInt() * 8;
+				//on lit la ligne de documents
+				dis.skipBytes(size);
+			}
+				
+			if (dis.available() > 0)
+				word_ = dis.readUTF();
+			else  eof = true;
+		}
+		bis.close();
+		if (found)
+			return line;
+		else return "";
 	}
 
+
 }
+
+

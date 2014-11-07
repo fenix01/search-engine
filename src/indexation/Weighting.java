@@ -1,12 +1,17 @@
 package indexation;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -30,6 +35,88 @@ public class Weighting implements Runnable {
 		this.start_doc = start_doc;
 		this.end_doc = end_doc;
 		this.sizeCorpus = sizeCorpus;
+	}
+	
+	/*
+	 * met à jour la somme des poids d'un document en parcourant tous les indexs données
+	 * et restructure tous les indexes afin d'intégrer le poids de chaque mot dans un document
+	 * par exemple une ligne de l'index avant l'appel de cette fonction est de la forme :
+	 * cheval df docID1:tf1,docID2:tf2
+	 * après l'appel la ligne est de la forme
+	 * cheval df docID1:tf1:weight1,docID2:tf2:weight2
+	 */
+	public void updateBinarySumWeights(String index) throws IOException{
+		File fIndex = new File(index);
+		
+		String tmpIDX = index.substring(0, index.lastIndexOf(".idx"))+0+Common.extTMP;
+		File fTmpIndex = new File(tmpIDX);
+		FileInputStream fis = null;
+		BufferedInputStream bis = null;
+		DataInputStream dis = null;
+		
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		DataOutputStream dos = null;
+			//prépare la lecture de l'index dont le chemin est en paramètre
+			fis = new FileInputStream(index);
+			bis = new BufferedInputStream(fis);
+			dis = new DataInputStream(bis);
+			//prépare la réécriture de l'index
+			fos = new FileOutputStream(fTmpIndex);
+			bos = new BufferedOutputStream(fos);
+			dos = new DataOutputStream(bos);
+			
+			boolean EOF = false;
+			//on parcourt toutes les lignes de l'index
+			//on lit le mot
+			String word = dis.readUTF();
+			while (!EOF){
+				//on lit le df
+				int df = dis.readInt();
+			
+				//contient pour l'instant le mot et le df
+				dos.writeUTF(word);
+				dos.writeInt(df);
+				
+				//on parcourt la liste des docs
+				for (int i = 0 ; i < df ; i++){
+					//on lit le docID, et le tf
+					int docId = dis.readInt();
+					
+					synchronized (sum_weights) {
+						//On calcule le df_t
+						float df_t = sizeCorpus / df;
+						float tf = dis.readShort();
+						//on calcule le poids pour le mot associé au document courant
+						float weight = (float) (tf * Math.log10(df_t));
+						
+						//on écrit le docID, et le poids
+						dos.writeInt(docId);
+						dos.writeFloat(weight);
+						
+						Float docWeight = sum_weights.get(docId);
+						if (docWeight == null){
+							sum_weights.put(docId, weight*weight);
+						}
+						else {
+							sum_weights.put(docId, docWeight+weight*weight);
+						}	
+					}
+				}
+				if (dis.available() > 0)
+					word = dis.readUTF();
+				else  EOF = true;
+			}
+
+		try {
+			dis.close();
+			dos.close();
+			fIndex.delete();
+			fTmpIndex.renameTo(fIndex);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/*
@@ -127,7 +214,12 @@ public class Weighting implements Runnable {
 				doc = index.get(i);
 				
 			}
-			updateSumWeights(doc);
+			try {
+				updateBinarySumWeights(doc);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
