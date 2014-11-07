@@ -78,9 +78,15 @@ public class Request {
 		System.out.println(estimatedTime / 1000);
 		
 		String res= Long.toString(estimatedTime)+"\n";
-		for(Entry<String, Float> entry : sortedSim)
-			res+=entry.getKey()+"\t"+entry.getValue()+"\n";
 		
+		int limit=0;
+		
+		for(Entry<String, Float> entry : sortedSim){
+			res+=entry.getKey()+"\n";
+			limit++;
+			if(limit==15)
+				break;
+		}
 		return res;
 	}
 	

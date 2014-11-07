@@ -176,9 +176,8 @@ public class Common {
 						
 							bw.write(h.firstKey()+"\t"+h.get(h.firstKey()));
 							bw.newLine();
-							
 							File f = new File(h.get(h.firstKey()));
-							bwall.write(f.getName());
+							bwall.write(h.get(h.firstKey()).substring(0, h.get(h.firstKey()).length()-3)+"html");
 							bwall.newLine();
 							h.remove(h.firstKey());
 					}

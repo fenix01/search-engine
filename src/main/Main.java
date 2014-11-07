@@ -3,6 +3,7 @@ package main;
 import indexation.TaskIndexing;
 import indexation.Weighting;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -58,10 +59,14 @@ public class Main {
 				System.out.println("Nombre de fichiers à indexer");
 				nb_doc = sc.nextInt();
 				
+				
+				long startTimeCorpus = System.currentTimeMillis();
 				h = new TreeMap<>();
 				Common.getDirectory(fCorpus, h, ".txt", nb_doc);
 				Common.writeDirectory(h,nb_thread,nb_doc);
-				
+
+				long estimatedTimeCorpus = System.currentTimeMillis() - startTimeCorpus;
+				System.out.println(estimatedTimeCorpus / 1000);
 				break;
 			//lire la liste des fichiers du corpus
 			case 2:
@@ -149,6 +154,9 @@ public class Main {
 				Request request = new Request(req, new FrenchStemmer());
 				request.search();*/
 
+				/*Desktop desktop = Desktop.getDesktop();
+				desktop.open(new File("/partage/public/iri/projetIRI/corpus/0060/006001/00600117.html")) ;*/
+				
 				Fenetre f= new Fenetre();
 				
 				break;

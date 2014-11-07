@@ -127,7 +127,6 @@ public class Weighting implements Runnable {
 				doc = index.get(i);
 				
 			}
-			System.out.println(doc);
 			updateSumWeights(doc);
 		}
 		
