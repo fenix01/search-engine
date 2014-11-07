@@ -114,7 +114,6 @@ public class TaskIndexing implements Runnable {
 
 	@Override
 	public void run() {
-		long startTime = System.currentTimeMillis();
 		int compteur = 0;
 		FileReader fr;
 
@@ -180,8 +179,6 @@ public class TaskIndexing implements Runnable {
 	
 		saveTempIndex();
 		fusionIndexes(this.tmp_idx, this.name_idx);
-		long estimatedTime = System.currentTimeMillis() - startTime;
-		System.out.println(estimatedTime / 1000);
 	}
 
 	private void saveTempIndex() {

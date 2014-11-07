@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import search.Fenetre;
 import search.Request;
 import tools.FrenchStemmer;
 import tools.FrenchTokenizer;
@@ -81,7 +82,8 @@ public class Main {
 				break;
 			//Indexer le corpus
 			case 3:
-				
+
+				long startTime = System.currentTimeMillis();
 				Normalizer stemmer[]=new Normalizer[nb_thread];
 				Normalizer tokenizer[]=new Normalizer[nb_thread];
 				
@@ -110,8 +112,14 @@ public class Main {
 				TaskIndexing.fusionThreadsIndexes(nb_thread);
 				//découper l'index en plusieurs index
 				TaskIndexing.splitIndex(2);
+
+				long estimatedTime = System.currentTimeMillis() - startTime;
+				System.out.println(estimatedTime / 1000);
+				
 				break;
 			case 4:
+
+				long startTime1 = System.currentTimeMillis();
 				File fIndexes = new File(Common.DIRINDEX);
 				TreeMap<Integer, String> indexes = new TreeMap<>();
 				TreeMap<Integer, Float> sum_weights = new TreeMap<>();
@@ -128,15 +136,21 @@ public class Main {
 				weight_2.join();
 				Weighting.saveWeights(Common.DIRINDEX + "docWeight"+Common.extWEIGHT, sum_weights);
 				Weighting.saveWeights2();
+
+				long estimatedTime1 = System.currentTimeMillis() - startTime1;
+				System.out.println(estimatedTime1 / 1000);
+				
 				break;
 			case 5:
 				System.out.println("commande 4: indexation avec stemming, commande 5 indexation tokenizer");
 			case 6:
-				System.out.println("entrer votre requête");
-				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				/*BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				String req = br.readLine();
 				Request request = new Request(req, new FrenchStemmer());
-				request.search();
+				request.search();*/
+
+				Fenetre f= new Fenetre();
+				
 				break;
 			case 8:
 				//permet de supprimer les anciens indexes, et de créer le répertoire

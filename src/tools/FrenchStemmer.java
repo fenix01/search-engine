@@ -78,7 +78,21 @@ public class FrenchStemmer extends org.tartarus.snowball.ext.frenchStemmer imple
 	@Override
 	public ArrayList<String> normalize(String text) {
 		ArrayList<String> words = (new FrenchTokenizer()).tokenize(text.toLowerCase());
-		return words;
-	}
+		ArrayList<String> result = new ArrayList<String>();
+		for (String word : words) {
+			// on ajoute le mot dans la liste s'il n'appartient pas ï¿œ la liste des mots-clï¿œs.
+			// Idï¿œalement il faudrait utiliser une structure de donnï¿œes plus efficace que la liste,
+			// mais ce n'est pas le sujet.
+			if (!(this.stopWords.contains(word) || word.length() == 1 || word.equals("..."))) {
+				this.setCurrent(word);
+				for (int i = REPEAT; i != 0; i--) {
+					this.stem();
+				}
+				
+				result.add(this.getCurrent());
+			}
+		}
 
+		return result;
+	}
 }

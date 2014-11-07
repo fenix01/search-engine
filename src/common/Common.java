@@ -33,6 +33,10 @@ public class Common {
 	public static String DIRINDEX = DIRRSC + "index/";
 	//public static String DIRCORPUS = DIRRSC + "corpus/";
 	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
+	
+	public static String DIRINDEXCOMMUN="/partage/projet/iri/blondy_barussaud_petiot/";
+	public static String DIRINDEXCOMMUNSTEMMER=DIRINDEXCOMMUN+"stemmer/";
+	public static String DIRINDEXCOMMUNTOKEN=DIRINDEXCOMMUN+"tokenizer/";
 
 	public static ArrayList<String> emptyWords;
 	

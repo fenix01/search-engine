@@ -33,9 +33,14 @@ public class Request {
 	
 	/**
 	 * permet de rechercher les documents pour la requête donnée
+	 * @return 
 	 * @throws IOException 
 	 */
-	public void search() throws IOException{
+	public String search() throws IOException{
+		
+
+		long startTime = System.currentTimeMillis();
+		
 		//contient pour chaque mot sa liste de documents
 		LinkedList<ArrayList<Couple>> ltRequest = new LinkedList<>(); 
 		for (String word : request){
@@ -44,12 +49,14 @@ public class Request {
 				//extrait pour chaque mot sa liste de docs avec les poids
 				ltDocs = extractWordFromIndex(word);
 				//calcul le poids des mots de la requête
-				float weight =  (float) Math.log10(Main.nb_doc/ltDocs.size());
-				weigths.put(word, weight);
-				sum_weigth += (weight * weight);
 				
-				if (ltDocs != null)
+				if (ltDocs != null){
+					System.out.println(word);
+					float weight =  (float) Math.log10(Main.nb_doc/ltDocs.size());
+					weigths.put(word, weight);
+					sum_weigth += (weight * weight);
 					ltRequest.add(ltDocs);
+					}
 			}
 		}
 		
@@ -59,18 +66,22 @@ public class Request {
 		
 		//il faut à présent calculer la similarité entre la requête et la liste des docs extraits
 		ArrayList<Couple> ltFusion = fusion(ltRequest);
-		for(int i=0;i<ltFusion.size();i++)
-			System.out.println(ltFusion.get(i).getDocID()+"\t"+ltFusion.get(i).getWeight().toString());
 		
 		//on récupère les similarités
 		HashMap<String,Float> similarities = similarity(ltFusion);
-		System.out.println(sum_weigth);
-		System.out.println(weigths.toString());
+		
 		@SuppressWarnings("unchecked")
 		SortedSet<Entry<String, Float>> sortedSim = Common.sortMap(similarities);
-		for(Entry<String, Float> entry : sortedSim)
-			System.out.println(entry.getKey()+":"+entry.getValue());
 		
+
+		long estimatedTime = System.currentTimeMillis() - startTime;
+		System.out.println(estimatedTime / 1000);
+		
+		String res= Long.toString(estimatedTime)+"\n";
+		for(Entry<String, Float> entry : sortedSim)
+			res+=entry.getKey()+"\t"+entry.getValue()+"\n";
+		
+		return res;
 	}
 	
 	private HashMap<String,Float> similarity(ArrayList<Couple> ltFusion) throws IOException{
@@ -79,6 +90,7 @@ public class Request {
 		HashMap<String,Float> similarities2 = new HashMap<>();
 		
 		for (Couple cpDoc : ltFusion){
+			sim=0;
 			for (Map.Entry<String, Float> wordDoc : cpDoc.getWeight().entrySet()){
 				float req_weight = weigths.get(wordDoc.getKey());
 				sim+= (req_weight * wordDoc.getValue());
@@ -96,12 +108,14 @@ public class Request {
 			Float simReq = similarities.get(Integer.parseInt(lineSumWeigth[0]));
 			if (simReq != null){
 				float sumWeight = Float.parseFloat(lineSumWeigth[1]);
-				System.out.println(lineSumWeigth[0]+"\t"+lineSumWeigth[1]);
+				//System.out.println(lineSumWeigth[0]+"\t"+lineSumWeigth[1]);
 				simReq = (float) (simReq / (this.sum_weigth * sumWeight));
+				System.out.println();
 				similarities.remove(lineSumWeigth[0]);
 				similarities2.put(lineSumWeigth[2], simReq);
 			}
 		}
+		System.out.println(similarities2.size());
 		br.close();
 		return similarities2;
 	}
