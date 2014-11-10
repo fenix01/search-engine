@@ -37,7 +37,7 @@ public class Weighting implements Runnable {
 		this.sizeCorpus = sizeCorpus;
 	}
 	
-	/*
+	/**
 	 * met à jour la somme des poids d'un document en parcourant tous les indexs données
 	 * et restructure tous les indexes afin d'intégrer le poids de chaque mot dans un document
 	 * par exemple une ligne de l'index avant l'appel de cette fonction est de la forme :
@@ -119,7 +119,7 @@ public class Weighting implements Runnable {
 		}
 	}
 	
-	/*
+	/**
 	 * met à jour la somme des poids d'un document en parcourant tous les indexs données
 	 * et restructure tous les indexes afin d'intégrer le poids de chaque mot dans un document
 	 * par exemple une ligne de l'index avant l'appel de cette fonction est de la forme :

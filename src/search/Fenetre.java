@@ -82,7 +82,7 @@ public class Fenetre extends JFrame{
 		        if (evt.getClickCount() == 2) {
 		            int index = l.locationToIndex(evt.getPoint());
 		            try {
-						desktop.open(new File(model.get(index)));
+		            	if(index > 0) desktop.open(new File(model.get(index)));
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

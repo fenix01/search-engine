@@ -27,6 +27,7 @@ public class Main {
 		TreeMap<Integer, String> h = null;
 		File fRevCorpus = new File(Common.DIRRSC + "0.corpus");
 		File fCorpus = new File(Common.DIRCORPUS);
+		File index_dir = new File(Common.DIRINDEX);
 		int nb_thread=4;
 		//permet de charger les mots vides
 		Common.loadEmptyWords();
@@ -82,6 +83,7 @@ public class Main {
 			case 3:
 
 				long startTime = System.currentTimeMillis();
+				index_dir.mkdir();
 				Normalizer stemmer[]=new Normalizer[nb_thread];
 				Normalizer tokenizer[]=new Normalizer[nb_thread];
 				
@@ -95,7 +97,7 @@ public class Main {
 				TaskIndexing index[]=new TaskIndexing[nb_thread];
 				
 				for(int i=0;i<nb_thread;i++){
-					index[i]=new TaskIndexing(i+".corpus", stemmer[i], true,
+					index[i]=new TaskIndexing(i+".corpus", tokenizer[i], true,
 							"index"+i, 10000/nb_thread);
 				}
 				
@@ -154,11 +156,12 @@ public class Main {
 				
 				break;
 			case 8:
-				//permet de supprimer les anciens indexes, et de créer le répertoire
-				File index_dir = new File(Common.DIRINDEX);
-				index_dir.mkdir();
-				for (File file : index_dir.listFiles()) {
-					file.delete();
+				//permet de supprimer les anciens indexes
+				File [] list_index = index_dir.listFiles();
+				if (list_index != null){
+					for (File file : list_index) {
+						file.delete();
+					}
 				}
 				fRevCorpus.delete();
 				break;

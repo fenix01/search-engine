@@ -21,7 +21,9 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-//Classe qui contient des méthodes communes pour les différents package
+/**
+ * Classe qui contient des méthodes communes pour les différents package
+ */
 
 public class Common {
 	
@@ -32,7 +34,8 @@ public class Common {
 	//extension du fichier poids
 	public static String extWEIGHT = ".wgt";	
 
-	public static String DIRRSC = "./rsc/";
+	//public static String DIRRSC = "./rsc/";
+	public static String DIRRSC = "/projet/iri/blondy_barussaud_petiot/test_1m/";
 	public static String DIRINDEX = DIRRSC + "index/";
 	//public static String DIRCORPUS = DIRRSC + "corpus/";
 	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
@@ -158,7 +161,7 @@ public class Common {
 		}
 	}
 	
-	/*
+	/**
 	 * écrit la liste des documents dans un fichier corpus.txt.
 	 * permet de sauvegarder le dictionnaire inversée, permettant de retrouver
 	 * un fichier à partir de son identifiant numérique.
@@ -196,7 +199,7 @@ public class Common {
 		}
 	}
 	
-	/*
+	/**
 	 * permet de récupérer à partir de corpus.txt la liste des fichiers du corpus
 	 */
 	public static TreeMap<Integer, String[]> readDirectory(){
