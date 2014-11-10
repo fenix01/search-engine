@@ -3,22 +3,14 @@ package main;
 import indexation.TaskIndexing;
 import indexation.Weighting;
 
-import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-import search.Fenetre;
 import search.Request;
 import tools.FrenchStemmer;
 import tools.FrenchTokenizer;
@@ -34,7 +26,7 @@ public class Main {
 		TreeMap<Integer, String> h = null;
 		File fRevCorpus = new File(Common.DIRRSC + "0.corpus");
 		File fCorpus = new File(Common.DIRCORPUS);
-		int nb_thread=4;
+		int nb_thread=2;
 		//permet de charger les mots vides
 		Common.loadEmptyWords();
 		
@@ -116,7 +108,7 @@ public class Main {
 				//fusionne les indexes créé par les 2 threads
 				TaskIndexing.fusionThreadsIndexes(nb_thread);
 				//découper l'index en plusieurs index
-				TaskIndexing.splitIndex(2);
+				TaskIndexing.splitBinaryIndex(2);
 
 				long estimatedTime = System.currentTimeMillis() - startTime;
 				System.out.println(estimatedTime / 1000);
@@ -149,15 +141,15 @@ public class Main {
 			case 5:
 				System.out.println("commande 4: indexation avec stemming, commande 5 indexation tokenizer");
 			case 6:
-				/*BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				String req = br.readLine();
 				Request request = new Request(req, new FrenchStemmer());
-				request.search();*/
+				request.search();
 
 				/*Desktop desktop = Desktop.getDesktop();
 				desktop.open(new File("/partage/public/iri/projetIRI/corpus/0060/006001/00600117.html")) ;*/
 				
-				Fenetre f= new Fenetre();
+				//Fenetre f= new Fenetre();
 				
 				break;
 			case 8:

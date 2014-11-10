@@ -116,7 +116,6 @@ public class Request {
 				float sumWeight = Float.parseFloat(lineSumWeigth[1]);
 				//System.out.println(lineSumWeigth[0]+"\t"+lineSumWeigth[1]);
 				simReq = (float) (simReq / (this.sum_weigth * sumWeight));
-				System.out.println();
 				similarities.remove(lineSumWeigth[0]);
 				similarities2.put(lineSumWeigth[2], simReq);
 			}
@@ -137,7 +136,7 @@ public class Request {
 		File fIndex = new File(Common.DIRINDEX + firstOcc + Common.extIDX);
 		String line = null;
 		try {
-			line = Common.sequentialSearch(fIndex, word);
+			line = Common.sequentialBinarySearch(fIndex, word);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
