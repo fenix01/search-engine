@@ -171,7 +171,7 @@ public class Common {
 		int modulo=nb_doc/nb_th;
 		
 		try {
-			FileWriter fwall = new FileWriter(new File(DIRRSC+"all.corpus"));
+			FileWriter fwall = new FileWriter(new File(DIRRSC+"html.corpus"));
 			BufferedWriter bwall = new BufferedWriter(fwall);
 			
 				for(int j=0;j<nb_th;j++){
