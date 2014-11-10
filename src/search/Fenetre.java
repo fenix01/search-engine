@@ -18,7 +18,10 @@ import java.util.HashMap;
 
 import javax.swing.*;
 
+import common.Common;
+
 import tools.FrenchStemmer;
+import tools.FrenchTokenizer;
 
 
 public class Fenetre extends JFrame{
@@ -107,12 +110,13 @@ public class Fenetre extends JFrame{
 		bouton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent event){
 
-				Request request = new Request(text.getText(), new FrenchStemmer());
+				
 				
 				model.removeAllElements();
 				
 				try {
 					if(jr1.isSelected()){  
+						Request request = new Request(text.getText(), new FrenchTokenizer(),Common.DIRINDEXCOMMUNTOKEN);
 						String s=request.search();
 						String[] items=s.split("\n");
 						for(int i=0;i<items.length;i++){
@@ -120,9 +124,12 @@ public class Fenetre extends JFrame{
 						}
 					}
 					else if(jr2.isSelected()){  
-
+						Request request = new Request(text.getText(), new FrenchStemmer(),Common.DIRINDEXCOMMUNSTEMMER);
 						String s=request.search();
-						p.setText(s);
+						String[] items=s.split("\n");
+						for(int i=0;i<items.length;i++){
+							model.addElement(items[i]);
+						}
 					}
 				} catch (NumberFormatException e) {
 					// TODO Auto-generated catch block

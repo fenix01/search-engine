@@ -24,11 +24,13 @@ public class Request {
 	private ArrayList<String> request;
 	private float sum_weigth;
 	private HashMap<String,Float> weigths;
+	private String chemin_idx=null;
 	
-	public Request(String req, Normalizer norm){
+	public Request(String req, Normalizer norm,String path){
 		//permet de normaliser la requête
 		this.request = norm.normalize(req);
 		this.weigths = new HashMap<>();
+		this.chemin_idx=path;
 	}
 	
 	/**
@@ -104,7 +106,7 @@ public class Request {
 			}
 			similarities.put(cpDoc.getDocID(), sim);
 		}
-		FileReader fr = new FileReader(Common.DIRINDEX+"weight"+Common.extWEIGHT);
+		FileReader fr = new FileReader(chemin_idx+"weight"+Common.extWEIGHT);
 		BufferedReader br = new BufferedReader(fr);
 		
 		String line = null;
@@ -133,7 +135,7 @@ public class Request {
 	private ArrayList<Couple> extractWordFromIndex(String word) {
 		ArrayList<Couple> ltDocs = null;
 		String firstOcc = Common.firstOcc(word, 2);
-		File fIndex = new File(Common.DIRINDEX + firstOcc + Common.extIDX);
+		File fIndex = new File(chemin_idx + firstOcc + Common.extIDX);
 		String line = null;
 		try {
 			line = Common.sequentialBinarySearch(fIndex, word);

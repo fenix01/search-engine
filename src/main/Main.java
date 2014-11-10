@@ -77,6 +77,7 @@ public class Main {
 					}
 					nb_doc=cpt*nb_thread;
 					System.out.println(nb_doc);
+					br.close();
 				}
 				break;
 			//Indexer le corpus
@@ -108,7 +109,7 @@ public class Main {
 					index[i].join();
 				}
 			
-				//fusionne les indexes créé par les 2 threads
+				//fusionne les indexes créé par les n threads
 				TaskIndexing.fusionThreadsIndexes(nb_thread);
 				//découper l'index en plusieurs index
 				TaskIndexing.splitBinaryIndex(2);

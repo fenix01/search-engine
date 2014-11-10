@@ -40,9 +40,8 @@ public class Common {
 	//public static String DIRCORPUS = DIRRSC + "corpus/";
 	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 	
-	public static String DIRINDEXCOMMUN=DIRRSC + "index/";
-	public static String DIRINDEXCOMMUNSTEMMER=DIRINDEXCOMMUN+"stemmer/";
-	public static String DIRINDEXCOMMUNTOKEN=DIRINDEXCOMMUN+"tokenizer/";
+	public static String DIRINDEXCOMMUNSTEMMER=DIRINDEX+"stemmer/";
+	public static String DIRINDEXCOMMUNTOKEN=DIRINDEX+"tokenizer/";
 
 	public static ArrayList<String> emptyWords;
 	
@@ -119,6 +118,8 @@ public class Common {
 					}
 				});
 		sortedMap.addAll(mp.entrySet());
+		mp.clear();
+		System.gc();
 		return sortedMap;
 	}
 
