@@ -250,7 +250,7 @@ public class Weighting implements Runnable {
 	
 	public static void saveWeights2() throws IOException{
 		File f1 = new File(Common.DIRINDEX + "docWeight"+Common.extWEIGHT);
-		File f2 = new File(Common.DIRRSC+"all.corpus");
+		File f2 = new File(Common.DIRRSC+"html.corpus");
 		FileReader fr1 = new FileReader(f1);
 		FileReader fr2 = new FileReader(f2);
 		BufferedReader br1 = new BufferedReader(fr1);
