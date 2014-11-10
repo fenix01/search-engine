@@ -34,15 +34,10 @@ public class Common {
 	//extension du fichier poids
 	public static String extWEIGHT = ".wgt";	
 
-	//public static String DIRRSC = "./rsc/";
 	public static String DIRRSC = "/projet/iri/blondy_barussaud_petiot/test_1m/";
 	public static String DIRINDEX = DIRRSC + "index/";
-	//public static String DIRCORPUS = DIRRSC + "corpus/";
 	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 	
-	public static String DIRINDEXCOMMUNSTEMMER=DIRINDEX+"stemmer/";
-	public static String DIRINDEXCOMMUNTOKEN=DIRINDEX+"tokenizer/";
-
 	public static ArrayList<String> emptyWords;
 	
 	private static void unloadEmptyWords(){

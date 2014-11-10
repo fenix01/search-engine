@@ -39,13 +39,17 @@ public class Main {
 			System.out.println("--Bienvenue dans notre moteur de recherche--");
 			System.out.println("Choisissez une commande à effectuer");
 			System.out.println("lister les fichiers du corpus : tapez 1");
-			System.out.println("lire la liste des fichiers du corpus : tapez 2");
-			System.out.println("Indexer le corpus : tapez 3");
-			System.out.println("Parcours les indexes pour inclure le poids,"+
-			"et générer le fichier somme des poids : tapez 4");
-			System.out.println("Effectuer une recherche : tapez 6");
+			System.out.println("lire la liste des fichiers du corpus : tapez 2"
+					+" \n(résultat de la commande 1 nécessaire)");
+			System.out.println("Indexer le corpus : tapez 3 (!WARNING! Très long)");
+			System.out.println("Parcours les indexes pour inclure le poids,"
+					+"et générer le fichier somme des poids : tapez 4 (!WARNING! Long)"
+					+" \n(résultat de la commande 3 nécessaire)");
+			System.out.println("Ouvrir la fenêtre de recherche : tapez 6"
+					+" \n(résultat de la commande 2 nécessaire)");
 			System.out.println("Supprimer les indexes, le fichier poids, et le fichier corpus : tapez 8");
-			System.out.println("quitter : tapez 9");
+			System.out.println("quitter : tapez 9 (ALPHA)");
+			System.out.println("Les fichiers créés pendant ces opérations restent présents sur le disque à la fermeture du programme");
 			command = sc.nextInt();
 			switch (command) {
 			//lister les fichiers du corpus

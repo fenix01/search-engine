@@ -72,7 +72,6 @@ public class Request {
 		//on récupère les similarités
 		HashMap<String,Float> similarities = similarity(ltFusion);
 		
-		@SuppressWarnings("unchecked")
 		SortedSet<Entry<String, Float>> sortedSim = Common.sortMap(similarities);
 		
 
@@ -86,7 +85,7 @@ public class Request {
 		for(Entry<String, Float> entry : sortedSim){
 			res+=entry.getKey()+"\n";
 			limit++;
-			if(limit==15)
+			if(limit==31)
 				break;
 		}
 		return res;

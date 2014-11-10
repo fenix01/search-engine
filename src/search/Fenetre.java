@@ -55,7 +55,7 @@ public class Fenetre extends JFrame{
 		JPanel Pane = new JPanel();
 		Pane.setLayout(null);
 
-		JLabel Lab1 = new JLabel("GLEGOO");
+		JLabel Lab1 = new JLabel("D'LUL");
 		Lab1.setFont(geglo);
 		JButton bouton = new JButton("Recherche");
 
@@ -116,7 +116,7 @@ public class Fenetre extends JFrame{
 				
 				try {
 					if(jr1.isSelected()){  
-						Request request = new Request(text.getText(), new FrenchTokenizer(),Common.DIRINDEXCOMMUNTOKEN);
+						Request request = new Request(text.getText(), new FrenchTokenizer(),Common.DIRINDEX+"tokenizer/");
 						String s=request.search();
 						String[] items=s.split("\n");
 						for(int i=0;i<items.length;i++){
@@ -124,7 +124,7 @@ public class Fenetre extends JFrame{
 						}
 					}
 					else if(jr2.isSelected()){  
-						Request request = new Request(text.getText(), new FrenchStemmer(),Common.DIRINDEXCOMMUNSTEMMER);
+						Request request = new Request(text.getText(), new FrenchStemmer(),Common.DIRINDEX+"stemmer/");
 						String s=request.search();
 						String[] items=s.split("\n");
 						for(int i=0;i<items.length;i++){
