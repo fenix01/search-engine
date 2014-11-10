@@ -24,6 +24,7 @@ import tools.FrenchStemmer;
 public class Fenetre extends JFrame{
 
 
+	
 	JPanel content = new JPanel();
 	final Font fontEntered = new Font(Font.DIALOG, Font.PLAIN, 20);
 	final Font geglo = new Font(Font.DIALOG, Font.PLAIN, 30);

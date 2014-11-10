@@ -34,8 +34,8 @@ public class Common {
 
 	public static String DIRRSC = "./rsc/";
 	public static String DIRINDEX = DIRRSC + "index/";
-	public static String DIRCORPUS = DIRRSC + "corpus/";
-	//public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
+	//public static String DIRCORPUS = DIRRSC + "corpus/";
+	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 	
 	public static String DIRINDEXCOMMUN=DIRRSC + "index/";
 	public static String DIRINDEXCOMMUNSTEMMER=DIRINDEXCOMMUN+"stemmer/";

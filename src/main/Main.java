@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import search.Fenetre;
 import search.Request;
 import tools.FrenchStemmer;
 import tools.FrenchTokenizer;
@@ -26,7 +27,7 @@ public class Main {
 		TreeMap<Integer, String> h = null;
 		File fRevCorpus = new File(Common.DIRRSC + "0.corpus");
 		File fCorpus = new File(Common.DIRCORPUS);
-		int nb_thread=2;
+		int nb_thread=4;
 		//permet de charger les mots vides
 		Common.loadEmptyWords();
 		
@@ -141,15 +142,15 @@ public class Main {
 			case 5:
 				System.out.println("commande 4: indexation avec stemming, commande 5 indexation tokenizer");
 			case 6:
-				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				/*BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				String req = br.readLine();
 				Request request = new Request(req, new FrenchStemmer());
-				request.search();
+				request.search();*/
 
 				/*Desktop desktop = Desktop.getDesktop();
 				desktop.open(new File("/partage/public/iri/projetIRI/corpus/0060/006001/00600117.html")) ;*/
 				
-				//Fenetre f= new Fenetre();
+				Fenetre f= new Fenetre();
 				
 				break;
 			case 8:

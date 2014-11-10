@@ -247,7 +247,7 @@ public class TaskIndexing implements Runnable {
 				// saveTempIndex();
 				// }
 				if (compteur == this.reached) {
-					System.out.println(Utils.memoryInfo());
+					//System.out.println(Utils.memoryInfo());
 					compteur = 0;
 					saveTempIndex();
 				}
