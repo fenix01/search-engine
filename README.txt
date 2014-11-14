@@ -13,7 +13,7 @@ C’est dans ce dossier que l’index sera écrit
 
 Pour une utilisation simple et rapide (si le corpus a déjà été indexé): 
 - Lancer le programme
-- Appuyer sur 6 puis Entrée
+- Appuyer sur 4 puis Entrée
 - Enjoy
 - If you like it, buy it !
 
@@ -21,11 +21,11 @@ Si le corpus (par défaut) n’a pas été indexé :
 - Lancer le programme
 - Appuyer sur 1 puis Entrée
 - Attendre
+- Appuyer sur 2 puis Entrée
+- Attendre
 - Appuyer sur 3 puis Entrée
 - Attendre
 - Appuyer sur 4 puis Entrée
-- Attendre
-- Appuyer sur 6 puis Entrée
 
 Utilisation Avancée :
 
