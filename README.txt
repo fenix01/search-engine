@@ -2,7 +2,8 @@ Bienvenue dans le moteur de recherche old-gen D’lul programmé par Francky, Pi
 
 Pour l’utiliser, vous avez besoin :
 - du .jar executable, ou de l’arborescence avec les fichiers sources .java
-- un fichier de mots vides stop.txt
+- un fichier de mots vides stop.txt (aux cotés du .jar)
+- un fichier config.ini (aux cotés du .jar)
 - de l’accès au répertoire des ressources
 ( /projet/iri/blondy_barussaud_petiot/ par défaut, configurable dans le .ini)
 C’est dans ce dossier que l’index sera écrit
