@@ -6,8 +6,9 @@ Pour l’utiliser, vous avez besoin :
 - de l’accès au répertoire des ressources
 ( /projet/iri/blondy_barussaud_petiot/ par défaut, configurable dans le .ini)
 C’est dans ce dossier que l’index sera écrit
-- d’un corpus de documents HTML (extension en .html) accompagnés de leur version épurée des balises en .txt (/public/iri/projetIRI/corpus/ par défaut, configurable dans le .ini)
-de Mozilla Firefox pour ouvrir les pages renvoyées par la recherche
+- d’un corpus de documents HTML (extension en .html) accompagnés de leur version épurée des balises en .txt
+(/public/iri/projetIRI/corpus/ par défaut, configurable dans le .ini)
+- de Mozilla Firefox pour ouvrir les pages renvoyées par la recherche
 
 Pour une utilisation simple et rapide (si le corpus a déjà été indexé): 
 - Lancer le programme
