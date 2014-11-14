@@ -20,7 +20,7 @@ import common.Common;
 
 public class Main {
 	
-	public static int nb_doc = 0;
+	public static int nb_doc = 1000000;
 	public static int nb_thread = 4;
 
 	/**
