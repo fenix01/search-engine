@@ -39,7 +39,7 @@ public class Common {
 	
 	
 
-	public static String FICEMPTYWORD = null;
+	public static String FICEMPTYWORD = "./stop.txt";
 	
 	public static String DIRRSC = "/projet/iri/blondy_barussaud_petiot/";
 	
