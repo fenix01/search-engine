@@ -59,34 +59,6 @@ public class Common {
 		if (!(emptyWords == null))
 			emptyWords.clear();
 	}
-
-	/**
-	 *  Fonction qui permet de charger la liste des mots vides
-	 * @throws IOException 
-	 */
-	
-	public static void load_data() throws IOException{
-		
-
-		FileReader fr = new FileReader(new File(Common.FICINI));
-		BufferedReader br = new BufferedReader(fr);
-		String line =br.readLine();
-		Main.nb_doc=Integer.parseInt(line);
-		line=br.readLine();
-		Main.nb_thread=Integer.parseInt(line);
-		line=br.readLine();
-		Common.DIRCORPUS=line;
-		line=br.readLine();
-		Common.FICEMPTYWORD=line;
-		line=br.readLine();
-		Common.DIRRSC=line;
-		br.close();
-		
-		DIRINDEX= DIRRSC + "index/";
-		DIRSTEM = Common.DIRINDEX + stemmername +"/";
-		DIRTOKEN = Common.DIRINDEX + tokenizername +"/";
-		
-	}
 	
 	public static void loadEmptyWords() {
 		unloadEmptyWords();
