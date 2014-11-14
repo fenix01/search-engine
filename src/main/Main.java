@@ -23,11 +23,6 @@ public class Main {
 	public static int nb_doc = 1000000;
 	public static int nb_thread = 4;
 
-	/**
-	 *  Fonction qui permet de charger la liste des mots vides
-	 * @throws IOException 
-	 */
-	
 	public static void init() throws IOException{
 		
 		FileReader fr = new FileReader(new File(Common.FICINI));
