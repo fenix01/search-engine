@@ -17,6 +17,9 @@ import java.util.TreeMap;
 
 import common.Common;
 
+/**
+ * Pour calculer tout ce qui est un poids
+ */
 public class Weighting implements Runnable {
 
 	private Thread th;
@@ -38,8 +41,8 @@ public class Weighting implements Runnable {
 	}
 	
 	/**
-	 * met à jour la somme des poids d'un document en parcourant tous les indexs données
-	 * et restructure tous les indexes afin d'intégrer le poids de chaque mot dans un document
+	 * met à jour la somme des poids d'un document en parcourant tous les index données
+	 * et restructure tous les index afin d'intégrer le poids de chaque mot dans un document
 	 * par exemple une ligne de l'index avant l'appel de cette fonction est de la forme :
 	 * cheval df docID1:tf1,docID2:tf2
 	 * après l'appel la ligne est de la forme
@@ -120,12 +123,12 @@ public class Weighting implements Runnable {
 	}
 	
 	/**
-	 * met à jour la somme des poids d'un document en parcourant tous les indexs données
-	 * et restructure tous les indexes afin d'intégrer le poids de chaque mot dans un document
+	 * met à jour la somme des poids d'un document en parcourant tous les index données
+	 * et restructure tous les index afin d'intégrer le poids de chaque mot dans un document
 	 * par exemple une ligne de l'index avant l'appel de cette fonction est de la forme :
-	 * cheval df docID1:tf1,docID2:tf2
+	 * foo  df docID1:tf1,docID2:tf2
 	 * après l'appel la ligne est de la forme
-	 * cheval df docID1:tf1:weight1,docID2:tf2:weight2
+	 * foo df docID1:tf1:weight1,docID2:tf2:weight2
 	 */
 	public void updateSumWeights(String index){
 		File fIndex = new File(index);
@@ -181,7 +184,7 @@ public class Weighting implements Runnable {
 						}
 						else {
 							sum_weights.put(docId, docWeight+weight*weight);
-						}	
+						}
 					}
 				}
 				//on peut réécrire la ligne à présent
@@ -189,7 +192,6 @@ public class Weighting implements Runnable {
 				bwTemp.newLine();
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
@@ -198,7 +200,6 @@ public class Weighting implements Runnable {
 			fIndex.delete();
 			fTmpIndex.renameTo(fIndex);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -217,7 +218,6 @@ public class Weighting implements Runnable {
 			try {
 				updateBinarySumWeights(doc);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -232,31 +232,41 @@ public class Weighting implements Runnable {
 		try {
 			th.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public static void saveWeights(String file,TreeMap<Integer,Float> sum_weights) throws IOException{
+	/**
+	 * 
+	 * @param file
+	 * @param sum_weights
+	 * @throws IOException
+	 */
+	public static void saveWeights(String file,TreeMap<Integer,Float> sumWeights) throws IOException{
 		File f = new File(file);
 		FileWriter fw = new FileWriter(f);
 		BufferedWriter bw = new BufferedWriter(fw);
-		for(Map.Entry<Integer, Float> weight_doc : sum_weights.entrySet()){
+		for(Map.Entry<Integer, Float> weight_doc : sumWeights.entrySet()){
 			bw.write(String.valueOf((float)(Math.sqrt(weight_doc.getValue()))));
 			bw.newLine();
 		}
 		bw.close();
 	}
 	
-	public static void saveWeights2() throws IOException{
-		File f1 = new File(Common.DIRINDEX + "docWeight"+Common.extWEIGHT);
-		File f2 = new File(Common.DIRRSC+"html.corpus");
+	/**
+	 * Ajoute le chemin d'accès vers le fichier HTML dans le fichier
+	 * des poids totaux des fichiers textes
+	 * @throws IOException
+	 */
+	public static void saveHtmlFilePath(String indexPath) throws IOException{
+		File f1 = new File(indexPath + "docWeight"+Common.extWEIGHT);
+		File f2 = new File(Common.DIRRSC+"html"+Common.extCORPUSLIST);
 		FileReader fr1 = new FileReader(f1);
 		FileReader fr2 = new FileReader(f2);
 		BufferedReader br1 = new BufferedReader(fr1);
 		BufferedReader br2 = new BufferedReader(fr2);
 		
-		File fres = new File(Common.DIRINDEX+"weight"+Common.extWEIGHT);
+		File fres = new File(indexPath+"weight"+Common.extWEIGHT);
 		FileWriter fwres = new FileWriter(fres);
 		BufferedWriter bw = new BufferedWriter(fwres);
 		

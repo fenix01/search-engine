@@ -21,17 +21,18 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import common.Common;
-import common.Utils;
 import tools.Normalizer;
 
+/**
+ * Thread créant l'index
+ */
 public class TaskIndexing implements Runnable {
 
-	// private TreeMap<Integer, String[]> corpus;
 	private String corpus;
 	// on stocke l'index sous la forme d'un treemap de
 	// String = mot en clé, et un TreeMap<DocID,tf> en valeur
 	// pour la recherche on a besoin de trier les documents
-	private TreeMap<String, TreeMap<Integer, Integer>> index;
+	private TreeMap<String, TreeMap<Integer, Short>> index;
 	private Normalizer normalizer;
 	private boolean stopwords;
 	private LinkedList<String> tmp_idx;
@@ -39,16 +40,16 @@ public class TaskIndexing implements Runnable {
 	private int reached = 0;
 	private int cur_index = 0;
 	private String name_idx = "";
+	public static String index_dir;
 
 	/**
-	 * permet de fusionner les indexes finaux générer par les threads
-	 * 
+	 * permet de fusionner les index finaux générer par les threads 
 	 * @param threads_count
 	 */
 	public static void fusionThreadsIndexes(int threads_count) {
 		LinkedList<String> threadsIndex = new LinkedList<>();
 		for (int i = 0; i < threads_count; i++) {
-			String indexName = Common.DIRINDEX + "index" + i + Common.extIDX;
+			String indexName = index_dir + "index" + i + Common.extIDX;
 			threadsIndex.add(indexName);
 		}
 		fusionIndexes(threadsIndex, "index");
@@ -56,7 +57,6 @@ public class TaskIndexing implements Runnable {
 
 	/**
 	 * permet de découper l'index binaire selon les X premières lettres des mots
-	 * 
 	 * @param x
 	 */
 	public static void splitBinaryIndex(int x) {
@@ -64,7 +64,7 @@ public class TaskIndexing implements Runnable {
 		BufferedInputStream bis;
 		DataInputStream dis;
 		try {
-			File fIndex = new File(Common.DIRINDEX + "index" + Common.extIDX);
+			File fIndex = new File(index_dir + "index" + Common.extIDX);
 			fis = new FileInputStream(fIndex);
 			bis = new BufferedInputStream(fis);
 			dis = new DataInputStream(bis);
@@ -79,7 +79,7 @@ public class TaskIndexing implements Runnable {
 			firstOccLine1 = Common.firstOcc(word1, x);
 			firstOccLine2 = Common.firstOcc(word2, x);
 			
-			String occName = Common.DIRINDEX + firstOccLine1 + Common.extIDX;
+			String occName = index_dir + firstOccLine1 + Common.extIDX;
 			File fOcc = new File(occName);
 			FileOutputStream fos = new FileOutputStream(fOcc);
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
@@ -102,7 +102,7 @@ public class TaskIndexing implements Runnable {
 					}
 					dos.close();
 					if (fOcc.length() == 0) fOcc.delete();
-					occName = Common.DIRINDEX + firstOccLine2 + Common.extIDX;
+					occName = index_dir + firstOccLine2 + Common.extIDX;
 					fOcc = new File(occName);
 					fos = new FileOutputStream(fOcc);
 					bos = new BufferedOutputStream(fos);
@@ -126,24 +126,21 @@ public class TaskIndexing implements Runnable {
 			fIndex.delete();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}	
 	
 	/**
 	 * permet de découper l'index selon les X premières lettres des mots
-	 * 
 	 * @param x
 	 */
 	public static void splitIndex(int x) {
 		FileReader fr;
 		FileWriter fw;
 		try {
-			File fIndex = new File(Common.DIRINDEX + "index" + Common.extIDX);
+			File fIndex = new File(index_dir + "index" + Common.extIDX);
 			fr = new FileReader(fIndex);
 			BufferedReader br = new BufferedReader(fr);
 
@@ -155,7 +152,7 @@ public class TaskIndexing implements Runnable {
 			firstOccLine1 = Common.firstOcc(line1, x);
 			firstOccLine2 = Common.firstOcc(line2, x);
 			
-			String occName = Common.DIRINDEX + firstOccLine1 + Common.extIDX;
+			String occName = index_dir + firstOccLine1 + Common.extIDX;
 			File fOcc = new File(occName);
 			fw = new FileWriter(fOcc, true);
 			BufferedWriter bw = new BufferedWriter(fw);
@@ -173,7 +170,7 @@ public class TaskIndexing implements Runnable {
 					}
 					bw.close();
 					if (fOcc.length() == 0) fOcc.delete();
-					occName = Common.DIRINDEX + firstOccLine2 + Common.extIDX;
+					occName = index_dir + firstOccLine2 + Common.extIDX;
 					fOcc = new File(occName);
 					fw = new FileWriter(fOcc, true);
 					bw = new BufferedWriter(fw);
@@ -192,10 +189,8 @@ public class TaskIndexing implements Runnable {
 			fIndex.delete();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -211,43 +206,33 @@ public class TaskIndexing implements Runnable {
 			String line = br.readLine();
 			while (line != null) {
 				try {
-					// System.out.println(i);
-					HashMap<String, Integer> tf_doc;
+					HashMap<String, Short> tf_doc;
 
 					String[] doc = line.split("\t");
 					int hash_doc = Integer.parseInt((doc[0]));
 					tf_doc = getTermFrequencies(doc[1], normalizer,
 							stopwords);
-					for (Map.Entry<String, Integer> word : tf_doc.entrySet()) {
-
-						if (!Common.isEmptyWord(word.getKey())) {
-							TreeMap<Integer, Integer> listDocs = index.get(word
-									.getKey());
+					for (Map.Entry<String, Short> word : tf_doc.entrySet()) {
+						String w = word.getKey();
+						if (!Common.isEmptyWord(w)) {
+							TreeMap<Integer, Short> listDocs = index.get(w);
 							if (listDocs != null) {
 								// le mot existe dans l'index, on l'ajoute dans
-								// la
-								// liste des documents
+								// la liste des documents
 								listDocs.put(hash_doc, word.getValue());
-								index.put(word.getKey(), listDocs);
+								index.put(w, listDocs);
 							} else {
-								TreeMap<Integer, Integer> list_docs = new TreeMap<>();
+								TreeMap<Integer, Short> list_docs = new TreeMap<>();
 								list_docs.put(hash_doc, word.getValue());
-								index.put(word.getKey(), list_docs);
+								index.put(w, list_docs);
 							}
 						}
 					}
 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				// if(Utils.getUsedMemory()>=1000000000){
-				// System.out.println(i);
-				// System.out.println(Utils.memoryInfo());
-				// saveTempIndex();
-				// }
 				if (compteur == this.reached) {
-					//System.out.println(Utils.memoryInfo());
 					compteur = 0;
 					saveTempIndex();
 				}
@@ -257,21 +242,20 @@ public class TaskIndexing implements Runnable {
 			br.close();
 			fr.close();
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	
 		saveTempIndex();
 		fusionIndexes(this.tmp_idx, this.name_idx);
+		System.gc();
 	}
 
 	private void saveTempIndex() {
 		try {
-			String out_idx = Common.DIRINDEX + this.name_idx + this.cur_index
+			String out_idx = index_dir + this.name_idx + this.cur_index
 					+ Common.extIDX;
 			this.tmp_idx.add(out_idx);
 			saveInvertedBinaryFile(index, new File(out_idx));
@@ -279,11 +263,11 @@ public class TaskIndexing implements Runnable {
 			this.cur_index++;
 			System.gc();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private static void saveInvertedFile(
 			TreeMap<String, TreeMap<Integer,Integer>> invertedFile, File outFile)
 			throws IOException {
@@ -313,24 +297,24 @@ public class TaskIndexing implements Runnable {
 	 * @throws IOException
 	 */
 	private static void saveInvertedBinaryFile(
-			TreeMap<String, TreeMap<Integer,Integer>> invertedFile, File outFile)
+			TreeMap<String, TreeMap<Integer,Short>> invertedFile, File outFile)
 			throws IOException {
 		FileOutputStream fos = new FileOutputStream(outFile);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
 		DataOutputStream dos = new DataOutputStream(bos);
 		//parcours toutes les entrées du TreeMap
-		for (Entry<String, TreeMap<Integer, Integer>> word : invertedFile.entrySet()) {
+		for (Entry<String, TreeMap<Integer, Short>> word : invertedFile.entrySet()) {
 			//récupère le mot
 			String word_ = word.getKey();
 			//écrit le mot dans le fichier binaire
 			dos.writeUTF(word_);
 			//récupère la liste des documents
-			TreeMap<Integer,Integer> fileList = word.getValue();
+			TreeMap<Integer,Short> fileList = word.getValue();
 			
 			//écrit le nombre de documents de la liste
 			dos.writeInt(fileList.size());
 			
-			for (Map.Entry<Integer, Integer> doc : fileList.entrySet()) {
+			for (Map.Entry<Integer, Short> doc : fileList.entrySet()) {
 				//on écrit le docID
 				dos.writeInt(doc.getKey());
 				//on écrit le tf
@@ -348,13 +332,13 @@ public class TaskIndexing implements Runnable {
 	 * @param removeStopWords
 	 * @throws IOException
 	 */
-	private static HashMap<String, Integer> getTermFrequencies(String fileName, Normalizer normalizer, boolean removeStopWords) throws IOException {
+	private static HashMap<String, Short> getTermFrequencies(String fileName, Normalizer normalizer, boolean removeStopWords) throws IOException {
 		// Création de la table des mots
-		HashMap<String, Integer> hits = new HashMap<String, Integer>();
+		HashMap<String, Short> hits = new HashMap<String, Short>();
 		
 		// Appel de la méthode de normalisation
 		ArrayList<String> words = normalizer.normalize(new File(fileName), removeStopWords);
-		Integer number;
+		Short number;
 		// Pour chaque mot de la liste, on remplit un dictionnaire
 		// du nombre d'occurrences pour ce mot
 		for (String word : words) {
@@ -364,7 +348,7 @@ public class TaskIndexing implements Runnable {
 			// Si ce mot n'était pas encore présent dans le dictionnaire,
 			// on l'ajoute (nombre d'occurrences = 1)
 			if (number == null) {
-				hits.put(word, 1);
+				hits.put(word, (short) 1);
 			}
 			// Sinon, on incrémente le nombre d'occurrence
 			else {
@@ -372,19 +356,15 @@ public class TaskIndexing implements Runnable {
 			}
 		}
 		return hits;
-//		// Affichage du résultat
-//		for (Map.Entry<String, Integer> hit : hits.entrySet()) {
-//			System.out.println(hit.getKey() + "\t" + hit.getValue());
-//		}
 	}
 
 	/**
-	 * permet de fusionner tous les indexes temporaires de la LinkedList passer
+	 * permet de fusionner tous les index temporaires de la LinkedList passée
 	 * en paramètre en un seul fichier d'index. Chaque entrée de la LinkedList
 	 * est un chemin vers un index temporaire
 	 * 
 	 * @param tmpIndexes
-	 *            est un LinkedList contenant des chemins vers des indexes
+	 *            est un LinkedList contenant des chemins vers des index
 	 *            temporaires
 	 * @param nameIndex
 	 *            correspond au prefix pour les noms des fichiers d'index
@@ -392,21 +372,21 @@ public class TaskIndexing implements Runnable {
 	 */
 	private static void fusionIndexes(LinkedList<String> tmpIndexes,
 			String nameIndex) {
-		// compteur pour gérer les indexes temporaires
+		// compteur pour gérer les index temporaires
 		int counter = tmpIndexes.size();
-		// tant qu'il reste au moins 2 indexes temporaires
+		// tant qu'il reste au moins 2 index temporaires
 		while (tmpIndexes.size() > 1) {
-			// on dépile 2 indexes temporaires
+			// on dépile 2 index temporaires
 			String outIndex1 = tmpIndexes.pollFirst();
 			String outIndex2 = tmpIndexes.pollFirst();
-			// on prépare les deux indexes
+			// on prépare les deux index
 			File f1 = new File(outIndex1);
 			File f2 = new File(outIndex2);
 			// on prépare un nouvelle index temporaire fusion de f1 et f2
-			String outIndexMerge = Common.DIRINDEX + nameIndex + counter
+			String outIndexMerge = index_dir + nameIndex + counter
 					+ Common.extIDX;
 			counter++;
-			// on fusionne les deux indexes temporaires
+			// on fusionne les deux index temporaires
 			File fMerge = new File(outIndexMerge);
 			try {
 				FusionIndex.mergeInvertedBinaryFiles(f1, f2, fMerge);
@@ -415,17 +395,17 @@ public class TaskIndexing implements Runnable {
 				e.printStackTrace();
 			}
 			// on ajoute le nouvel index fusionné à la fin de la liste des
-			// indexes temporaires
+			// index temporaires
 			tmpIndexes.addLast(outIndexMerge);
 			// on supprime les 2 fichiers d'index temporaire
 			f1.delete();
 			f2.delete();
 		}
 		// on renomme à présent l'index temporaire résultat de la fusion de tous
-		// les indexes temporaires
+		// les index temporaires
 		String tmpIndex = tmpIndexes.poll();
 		File f = new File(tmpIndex);
-		String outIndex = Common.DIRINDEX + nameIndex + Common.extIDX;
+		String outIndex = index_dir + nameIndex + Common.extIDX;
 		f.renameTo(new File(outIndex));
 	}
 
@@ -437,7 +417,6 @@ public class TaskIndexing implements Runnable {
 		try {
 			th.join();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

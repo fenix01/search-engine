@@ -2,18 +2,14 @@ package search;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import main.Main;
 import common.Common;
@@ -22,7 +18,7 @@ import tools.Normalizer;
 public class Request {
 	
 	private ArrayList<String> request;
-	private float sum_weigth;
+	private float sum_weight;
 	private HashMap<String,Float> weigths;
 	private String chemin_idx=null;
 	
@@ -35,7 +31,7 @@ public class Request {
 	
 	/**
 	 * permet de rechercher les documents pour la requête donnée
-	 * @return 
+	 * @return la liste des documents sous forme d'une chaîne de caractères
 	 * @throws IOException 
 	 */
 	public String search() throws IOException{
@@ -56,18 +52,22 @@ public class Request {
 					System.out.println(word);
 					float weight =  (float) Math.log10(Main.nb_doc/ltDocs.size());
 					weigths.put(word, weight);
-					sum_weigth += (weight * weight);
+					sum_weight += (weight * weight);
 					ltRequest.add(ltDocs);
 					}
 			}
 		}
 		
 		//calcul la racine de la somme des poids de la requête
-		sum_weigth = (float) Math.sqrt(sum_weigth);
+		sum_weight = (float) Math.sqrt(sum_weight);
 		
 		
 		//il faut à présent calculer la similarité entre la requête et la liste des docs extraits
 		ArrayList<Couple> ltFusion = fusion(ltRequest);
+		if(ltFusion==null){
+			
+			return "Aucun résultat trouvé";
+		}
 		
 		//on récupère les similarités
 		HashMap<String,Float> similarities = similarity(ltFusion);
@@ -78,7 +78,7 @@ public class Request {
 		long estimatedTime = System.currentTimeMillis() - startTime;
 		System.out.println(estimatedTime / 1000);
 		
-		String res= Long.toString(estimatedTime)+"\n";
+		String res= ltFusion.size()+" document(s) trouvé(s) en "+Long.toString(estimatedTime)+"  ms"+"\n";
 		
 		int limit=0;
 		
@@ -116,7 +116,7 @@ public class Request {
 			if (simReq != null){
 				float sumWeight = Float.parseFloat(lineSumWeigth[1]);
 				//System.out.println(lineSumWeigth[0]+"\t"+lineSumWeigth[1]);
-				simReq = (float) (simReq / (this.sum_weigth * sumWeight));
+				simReq = (float) (simReq / (this.sum_weight * sumWeight));
 				similarities.remove(lineSumWeigth[0]);
 				similarities2.put(lineSumWeigth[2], simReq);
 			}

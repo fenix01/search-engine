@@ -3,9 +3,9 @@ package search;
 import java.util.HashMap;
 
 /**
- * classe java permettant de stocker un couple d'entier,double
+ * classe java permettant de stocker un couple (entier,HashMap)
+ * représentant un document et ses mots (pour les requêtes exclusivement)
  * @author Yohann
- *
  */
 public class Couple {
 	

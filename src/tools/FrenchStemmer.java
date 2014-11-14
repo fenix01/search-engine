@@ -88,9 +88,10 @@ public class FrenchStemmer extends org.tartarus.snowball.ext.frenchStemmer imple
 				for (int i = REPEAT; i != 0; i--) {
 					this.stem();
 				}
-				
 				result.add(this.getCurrent());
+				System.out.println(this.getCurrent());
 			}
+
 		}
 
 		return result;

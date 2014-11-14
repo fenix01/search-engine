@@ -13,7 +13,19 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Classe permettant une fusion d'index simple et efficace *
+ */
+
 public class FusionIndex {
+	
+	/**
+	 * Fusionne 2 fichiers d'index en conservant l'ordre établi ligne par ligne
+	 * @param invertedFile1
+	 * @param invertedFile2
+	 * @param mergedInvertedFile le fichier résultat
+	 * @throws IOException
+	 */
 	public static void mergeInvertedFiles(File invertedFile1, File invertedFile2,
 			File mergedInvertedFile) throws IOException
 			{
@@ -26,9 +38,7 @@ public class FusionIndex {
 				
 				String line1 = br1.readLine();
 				String line2 = br2.readLine();
-				int count =0;
 				while (line1 != null && line2 != null) {
-					count++;
 					String[] splitted_line1 = line1.split("\t");
 					String[] splitted_line2 = line2.split("\t");
 					//on a dans la premi�re case de chaque tableau le mot
@@ -47,13 +57,13 @@ public class FusionIndex {
 					}
 					//si le mot1 < mot2
 					else if (splitted_line1[0].compareTo(splitted_line2[0]) < 0){
-						//on �crit la ligne 1 dans la sortie
+						//on écrit la ligne 1 dans la sortie
 						brMerge.write(line1);
 						brMerge.newLine();
 						line1 = br1.readLine();
 					}
 					else {
-						//on �crit la ligne 2 dans la sortie
+						//on écrit la ligne 2 dans la sortie
 						brMerge.write(line2);
 						brMerge.newLine();
 						line2 = br2.readLine();
@@ -79,6 +89,13 @@ public class FusionIndex {
 				brMerge.close();
 			}
 	
+	/**
+	 * Récupère la liste des documents dans lequel un mot est présent
+	 * @param df
+	 * @param dis
+	 * @return array of bytes
+	 * @throws IOException
+	 */
 	public static byte[] getBinaryDocs(int df, DataInputStream dis) throws IOException{
 		//fois 6 pour inclure le doc et le tf
 		int size = df * 6;
@@ -119,7 +136,7 @@ public class FusionIndex {
 	}
 	
 	/**
-	 * permet de faire de la fusion d'index entre deux fichiers binaires
+	 * Fusionne 2 fichiers (binaires) d'index en conservant l'ordre établi ligne par ligne
 	 * @param invertedFile1 fichier d'index 1
 	 * @param invertedFile2 fichier d'index 2
 	 * @param mergedInvertedFile fichier résultant de la fusion de index1 et index2

@@ -6,7 +6,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
-
+/**
+ * Classe fourni par le professeur Xavier Tannier
+ * pour effectuer des mesures de temps et d'espace
+ */
 public class Utils {
 	
 	final static Runtime runtime = Runtime.getRuntime();

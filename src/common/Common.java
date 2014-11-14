@@ -11,18 +11,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import main.Main;
+
 /**
- * Classe qui contient des méthodes communes pour les différents package
+ * Classe contenant des méthodes communes pour les différents package
  */
 
 public class Common {
@@ -33,20 +33,61 @@ public class Common {
 	public static String extIDX = ".idx";
 	//extension du fichier poids
 	public static String extWEIGHT = ".wgt";	
+	//extension du fichier poids
+	public static String extCORPUSLIST = ".corpus";	
+	//emplacement des différents index
+	
+	
 
-	public static String DIRRSC = "/projet/iri/blondy_barussaud_petiot/test_1m/";
-	public static String DIRINDEX = DIRRSC + "index/";
-	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
+	public static String FICEMPTYWORD = null;
+	
+	public static String DIRRSC = null;
+	
+	public static String FICINI = "./config.ini";
+	
+	public static String DIRINDEX = null;
+	public static String stemmername="FrenchStemmer";
+	public static String tokenizername="FrenchTokenizer";
+	public static String DIRSTEM = null;
+	public static String DIRTOKEN = null;
+	//emplacement du corpus
+	public static String DIRCORPUS = null;
 	
 	public static ArrayList<String> emptyWords;
 	
 	private static void unloadEmptyWords(){
 		if (!(emptyWords == null))
-		if (!emptyWords.isEmpty())
 			emptyWords.clear();
 	}
 
-	// Fonction qui permet de charger la liste des mots vides
+	/**
+	 *  Fonction qui permet de charger la liste des mots vides
+	 * @throws IOException 
+	 */
+	
+	public static void load_data() throws IOException{
+		
+
+		FileReader fr = new FileReader(new File(Common.FICINI));
+		BufferedReader br = new BufferedReader(fr);
+		String line =br.readLine();
+		Main.nb_doc=Integer.parseInt(line);
+		line=br.readLine();
+		Main.nb_thread=Integer.parseInt(line);
+		line=br.readLine();
+		Common.DIRCORPUS=line;
+		line=br.readLine();
+		Common.FICEMPTYWORD=line;
+		line=br.readLine();
+		Common.DIRRSC=line;
+		br.close();
+		
+		DIRINDEX= DIRRSC + "index/";
+		DIRSTEM = Common.DIRINDEX + stemmername +"/";
+		DIRTOKEN = Common.DIRINDEX + tokenizername +"/";
+		
+	}
+	
 	public static void loadEmptyWords() {
 		unloadEmptyWords();
 		File f;
@@ -56,21 +97,19 @@ public class Common {
 		ArrayList<String> stop = null;
 		try {
 			stop = new ArrayList<>();
-			f = new File(DIRRSC+"stop.txt");
+			f = new File(FICEMPTYWORD);
 			rd = new FileReader(f);
 			br = new BufferedReader(rd);
 			while ((line = br.readLine()) != null) {
 				stop.add(line);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {
 				br.close();
 				rd.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -78,8 +117,8 @@ public class Common {
 	}
 	
 	/**
-	 * retourne les premières lettres d'un mot de la ligne d'index vérifie si
-	 * certains mots ont une taille inférieur à x
+	 * retourne les premières lettres d'un mot de la ligne d'index 
+	 * vérifie si certains mots ont une taille inférieure à x
 	 * 
 	 * @param line
 	 * @param x
@@ -95,14 +134,18 @@ public class Common {
 			return word.substring(0, x);
 	}
 
-	// Fonction qui permet de renvoyer un Map trié par les valeurs
+	/**
+	 * Fonction qui permet de renvoyer un Map trié par valeur
+	 * @param mp
+	 * @return
+	 */
 	public static SortedSet<Entry<String, Float>> sortMap(Map mp) {
 		TreeSet sortedMap = new TreeSet<Map.Entry<String, Float>>(
 				new Comparator<Map.Entry<String, Float>>() {
 					@Override
 					public int compare(Map.Entry<String, Float> e1,
 							Map.Entry<String, Float> e2) {
-						int comp = Double.compare(e1.getValue(), e2.getValue());
+						int comp = Float.compare(e1.getValue(), e2.getValue());
 						if (comp == 0)
 							return 0;
 						else if (comp > 0)
@@ -118,15 +161,20 @@ public class Common {
 		return sortedMap;
 	}
 
-	// Fonction qui renvoit vrai si le mot en paramètre est un mot vide
+	/**
+	 *  Fonction qui renvoie vrai si le mot en paramètre est un mot vide
+	 * @param word
+	 * @return
+	 */
 	public static boolean isEmptyWord(String word)
 	{
-		String regexp = "[a-zA-Zéèçà0-9]*";
+		String regexp = "[a-zA-Zéèçà0-9]+[-]?[a-zA-Zéèçà0-9]*";
 	    return !word.toLowerCase().matches(regexp) || Common.emptyWords.contains(word.toLowerCase());
 	}
 
 	/**
-	 *  Fonction qui renvoit la liste des fichiers contenus dans un répertoire en fonction de son extension
+	 *  Fonction qui met la liste des fichiers contenus dans un répertoire en fonction de leur extension
+	 *  dans la variable listFiles
 	 */
 	public static void getDirectory(File f, TreeMap<Integer,String> listFiles, final String ext, int max_entries) 
 			throws IOException {
@@ -158,27 +206,26 @@ public class Common {
 	}
 	
 	/**
-	 * écrit la liste des documents dans un fichier corpus.txt.
-	 * permet de sauvegarder le dictionnaire inversée, permettant de retrouver
+	 * écrit la liste des documents dans un fichier .corpus.
+	 * permet de sauvegarder le dictionnaire inversé, permettant de retrouver
 	 * un fichier à partir de son identifiant numérique.
 	 */
 	public static void writeDirectory(TreeMap<Integer, String> h, int nb_th,int nb_doc){
 		int modulo=nb_doc/nb_th;
 		
 		try {
-			FileWriter fwall = new FileWriter(new File(DIRRSC+"html.corpus"));
+			FileWriter fwall = new FileWriter(new File(DIRRSC+"html"+extCORPUSLIST));
 			BufferedWriter bwall = new BufferedWriter(fwall);
 			
 				for(int j=0;j<nb_th;j++){
 					
-					FileWriter fw = new FileWriter(new File(DIRRSC+j+".corpus"));
+					FileWriter fw = new FileWriter(new File(DIRRSC+j+extCORPUSLIST));
 					BufferedWriter bw = new BufferedWriter(fw);
 					
 					while(h.size()>0 && h.firstKey()/modulo==j){
 						
 							bw.write(h.firstKey()+"\t"+h.get(h.firstKey()));
 							bw.newLine();
-							File f = new File(h.get(h.firstKey()));
 							bwall.write(h.get(h.firstKey()).substring(0, h.get(h.firstKey()).length()-3)+"html");
 							bwall.newLine();
 							h.remove(h.firstKey());
@@ -190,13 +237,12 @@ public class Common {
 			
 			}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * permet de récupérer à partir de corpus.txt la liste des fichiers du corpus
+	 * permet de récupérer la liste des fichiers du corpus à partir d'un fichier .corpus 
 	 */
 	public static TreeMap<Integer, String[]> readDirectory(){
 		TreeMap<Integer,String[]> listFiles = new TreeMap<>();
@@ -213,7 +259,6 @@ public class Common {
 			}
 			br.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return listFiles;
@@ -230,16 +275,14 @@ public class Common {
 		FileReader fr;
 		fr = new FileReader(f);
 		BufferedReader br = new BufferedReader(fr);
-		String line = "";
+		String line = br.readLine();
 		boolean found = false;
 		while (!found && line != null){
-			line = br.readLine();
-			if (line != null){
-				String word_ = line.split("\t")[0];
-				if (word_.equals(word)){
-					found = true;
-				}
+			String word_ = line.split("\t")[0];
+			if (word_.equals(word)){
+				found = true;
 			}
+			line = br.readLine();
 		}
 		br.close();
 		if (found)
@@ -247,6 +290,13 @@ public class Common {
 		else return "";
 	}
 	
+	/**
+	 * cherche un mot dans un index (fichier binaire) de façon séquentielle
+	 * @param f fichier d'index
+	 * @param word mot à rechercher
+	 * @return la ligne de l'index avec les docs, les poids, les tfs, et le df
+	 * @throws IOException
+	 */
 	public static String sequentialBinarySearch(File f, String word) throws IOException{
 		FileInputStream fis = new FileInputStream(f);
 		BufferedInputStream bis = new BufferedInputStream(fis);
@@ -291,6 +341,36 @@ public class Common {
 		if (found)
 			return line;
 		else return "";
+	}
+	
+	public static boolean clearDiskSpace(boolean index, boolean corpuslist ){
+		//permet de supprimer les anciens index
+		if(index){
+			File [] list_index = new File(Common.DIRINDEX).listFiles();		
+			if (list_index != null){
+				for (File dir : list_index) {
+					System.out.println(dir);
+					for (File file : dir.listFiles()) {
+						if(!file.delete()) return false;
+					}
+					if(!dir.delete()) return false;
+				}
+			}
+			File ind = new File(Common.DIRINDEX);
+			ind.delete();
+		}
+		//permet de supprimer les listes .corpus
+		if(corpuslist){
+			File fList[] = new File(Common.DIRRSC).listFiles();
+			for (int i = 0; i < fList.length; i++) {
+			    File fc = fList[i];
+			    if (fc.getName().endsWith(Common.extCORPUSLIST)) {
+			        if(!fc.delete()) return false;
+			    }
+			}
+		}
+		return true;
+		
 	}
 
 

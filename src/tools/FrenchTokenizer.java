@@ -128,18 +128,7 @@ public class FrenchTokenizer implements Normalizer {
 
 	@Override
 	public ArrayList<String> normalize(String text) {
-		return this.tokenize(text);
+		return this.tokenize(text.toLowerCase());
 	}
 	
-
-	public static void main(String[] args) {
-		// AJOUT AU TD 1 :
-		String stopWordFileName = "/chemin/vers/mots/vides";
-		String fileName = "/chemin/vers/un/texte";
-		try {
-			System.out.println((new FrenchTokenizer(stopWordFileName)).normalize(new File(fileName), true));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 }
