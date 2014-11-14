@@ -22,6 +22,10 @@ import tools.FrenchTokenizer;
  */
 public class Fenetre extends JFrame{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	JPanel content = new JPanel();
 	final Font fontEntered = new Font(Font.DIALOG, Font.PLAIN, 20);
 	final Font geglo = new Font(Font.DIALOG, Font.PLAIN, 30);

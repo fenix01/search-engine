@@ -7,7 +7,6 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,8 +17,6 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import main.Main;
 
 /**
  * Classe contenant des méthodes communes pour les différents package
@@ -39,19 +36,16 @@ public class Common {
 	
 	
 
-	public static String FICEMPTYWORD = null;
-	
-	public static String DIRRSC = null;
-	
+	public static String FICEMPTYWORD = "./stop.txt";
+	public static String DIRRSC = "/projet/iri/blondy_barussaud_petiot/test/";
 	public static String FICINI = "./config.ini";
-	
-	public static String DIRINDEX = null;
+	public static String DIRINDEX = DIRRSC+"index/";
 	public static String stemmername="FrenchStemmer";
 	public static String tokenizername="FrenchTokenizer";
-	public static String DIRSTEM = null;
-	public static String DIRTOKEN = null;
+	public static String DIRSTEM = DIRINDEX+stemmername+"/";
+	public static String DIRTOKEN = DIRINDEX+tokenizername+"/";
 	//emplacement du corpus
-	public static String DIRCORPUS = null;
+	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 	
 	public static ArrayList<String> emptyWords;
 	
@@ -65,28 +59,6 @@ public class Common {
 	 * @throws IOException 
 	 */
 	
-	public static void load_data() throws IOException{
-		
-
-		FileReader fr = new FileReader(new File(Common.FICINI));
-		BufferedReader br = new BufferedReader(fr);
-		String line =br.readLine();
-		Main.nb_doc=Integer.parseInt(line);
-		line=br.readLine();
-		Main.nb_thread=Integer.parseInt(line);
-		line=br.readLine();
-		Common.DIRCORPUS=line;
-		line=br.readLine();
-		Common.FICEMPTYWORD=line;
-		line=br.readLine();
-		Common.DIRRSC=line;
-		br.close();
-		
-		DIRINDEX= DIRRSC + "index/";
-		DIRSTEM = Common.DIRINDEX + stemmername +"/";
-		DIRTOKEN = Common.DIRINDEX + tokenizername +"/";
-		
-	}
 	
 	public static void loadEmptyWords() {
 		unloadEmptyWords();
@@ -139,8 +111,8 @@ public class Common {
 	 * @param mp
 	 * @return
 	 */
-	public static SortedSet<Entry<String, Float>> sortMap(Map mp) {
-		TreeSet sortedMap = new TreeSet<Map.Entry<String, Float>>(
+	public static SortedSet<Entry<String, Float>> sortMap(Map<String, Float> mp) {
+		TreeSet<Entry<String, Float>> sortedMap = new TreeSet<Map.Entry<String, Float>>(
 				new Comparator<Map.Entry<String, Float>>() {
 					@Override
 					public int compare(Map.Entry<String, Float> e1,
