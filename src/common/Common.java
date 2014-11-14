@@ -41,17 +41,17 @@ public class Common {
 
 	public static String FICEMPTYWORD = null;
 	
-	public static String DIRRSC = null;
+	public static String DIRRSC = "/projet/iri/blondy_barussaud_petiot/";
 	
 	public static String FICINI = "./config.ini";
 	
-	public static String DIRINDEX = null;
+	public static String DIRINDEX = DIRRSC+"index/";
 	public static String stemmername="FrenchStemmer";
 	public static String tokenizername="FrenchTokenizer";
-	public static String DIRSTEM = null;
-	public static String DIRTOKEN = null;
+	public static String DIRSTEM = DIRINDEX+stemmername+"/";
+	public static String DIRTOKEN = DIRINDEX+tokenizername+"/";
 	//emplacement du corpus
-	public static String DIRCORPUS = null;
+	public static String DIRCORPUS = "/public/iri/projetIRI/corpus/";
 	
 	public static ArrayList<String> emptyWords;
 	
@@ -60,6 +60,10 @@ public class Common {
 			emptyWords.clear();
 	}
 	
+	/**
+	 *  Fonction qui permet de charger la liste des mots vides
+	 * @throws IOException 
+	 */
 	public static void loadEmptyWords() {
 		unloadEmptyWords();
 		File f;
