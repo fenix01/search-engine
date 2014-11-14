@@ -23,10 +23,50 @@ public class Main {
 	public static int nb_doc = 0;
 	public static int nb_thread = 4;
 
+	/**
+	 *  Fonction qui permet de charger la liste des mots vides
+	 * @throws IOException 
+	 */
+	
+	public static void init() throws IOException{
+		
+		FileReader fr = new FileReader(new File(Common.FICINI));
+		BufferedReader br = new BufferedReader(fr);
+		String[] ll;
+		while ((l = br.readLine())!= null){
+		        if(l[0] != "#"){
+        		    ll = l.split("=");
+        		    switch(ll[0]){
+        		        case "DIRRSC":
+        		                if(ll[1]!="")
+        		        	        Common.DIRRSC=ll[1];
+        		        	break;
+        		        case "DIRCORPUS":
+        		                if(ll[1]!="")
+        		                        Common.DIRCORPUS=ll[1];
+        		                break;
+        		        case "EMPTYWORDS":
+        		                if(ll[1]!="")
+        		                        Common.FICEMPTYWORD=ll[1];
+        		                break;
+        		        case "THREADS":
+        		                if(ll[1]!="")
+        		                        nb_thread=Integer.parseInt(ll[1]);
+        		                break;
+        		        case "DOCUMENTS":
+        		                if(ll[1]!="")
+        		                        nb_doc=Integer.parseInt(ll[1]);
+        		                break;
+        		        case default : continue
+        		    }
+		        }
+		br.close();
+	}
+	
 	public static void main(String[] args) throws IOException {
 		
 		
-		Common.load_data();
+		init();
 		
 		
 		// liste des fichiers du corpus
